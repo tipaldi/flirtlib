@@ -1,0 +1,74 @@
+#include "ShapeContext.h"
+
+ShapeContextGenerator::ShapeContextGenerator(double minRho, double maxRho, unsigned int binRho, unsigned int binPhi)
+{
+    setEdges(minRho, maxRho, binRho, binPhi);
+}
+
+ShapeContextGenerator::ShapeContextGenerator(const std::vector<double>& rhoEdges, const std::vector<double>& phiEdges):
+    m_rhoEdges(rhoEdges),
+    m_phiEdges(phiEdges)
+{
+
+}
+
+void ShapeContextGenerator::setEdges(double minRho, double maxRho, unsigned int binRho, unsigned int binPhi){
+    m_rhoEdges.resize(binRho+1);
+    m_phiEdges.resize(binPhi+1);
+    double minPhi = -M_PI, maxPhi = M_PI;
+    for(unsigned int i = 0; i <= binRho; i++){
+		m_rhoEdges[i] = minRho + double(i)*(maxRho - minRho)/double(binRho);
+    }
+    for(unsigned int i = 0; i <= binPhi; i++){
+		m_phiEdges[i] = minPhi + double(i)*(maxPhi - minPhi)/double(binPhi);
+    }
+}
+
+
+Descriptor* ShapeContextGenerator::describe(const InterestPoint& point, const LaserReading& reading){
+    return describe(point.getPosition(), reading);
+}
+	
+Descriptor* ShapeContextGenerator::describe(const OrientedPoint2D& point, const LaserReading& reading){
+    unsigned int accumulator = 0;
+    ShapeContext * shape = new ShapeContext();
+    shape->getHistogram().resize(m_phiEdges.size() - 1, std::vector<double>(m_rhoEdges.size() - 1, 0.));
+    for(unsigned int i = 0; i < reading.getWorldCartesian().size(); i++){
+		Point2D difference = reading.getWorldCartesian()[i] - point;
+		double distance = hypot(difference.x, difference.y);
+		if ((distance >= m_rhoEdges[0] && distance < m_rhoEdges[m_rhoEdges.size() - 1])){
+			for(unsigned int rho = 0; rho < m_rhoEdges.size() - 1; rho++){
+				if((distance < m_rhoEdges[rho + 1] && distance >= m_rhoEdges[rho])){
+					double angle = atan2(difference.y, difference.x);
+					angle = normAngle(angle - point.theta, -M_PI);
+					for(unsigned int phi = 0; phi < m_phiEdges.size() - 1; phi++){
+						if(angle < m_phiEdges[phi + 1] && angle >= m_phiEdges[phi]){
+							shape->getHistogram()[phi][rho] += 1.;
+							accumulator += 1;
+						}
+					}
+				}
+			}
+		}
+    }
+    int size = shape->getHistogram().size() * shape->getHistogram().front().size();
+    for(unsigned int i = 0; i < shape->getHistogram().size(); i++){
+	for(unsigned int j = 0; j < shape->getHistogram()[i].size(); j++){
+	    shape->getHistogram()[i][j] = accumulator ? shape->getHistogram()[i][j]/double(accumulator) : 1./double(size);
+	}
+    }
+    shape->setDistanceFunction(m_distanceFunction);
+    return shape;
+}
+	
+Descriptor* ShapeContext::clone() const{
+    return new ShapeContext(*this);
+}
+	
+double ShapeContext::distance(const Descriptor* descriptor) const {
+    const ShapeContext *shapeContext = dynamic_cast<const ShapeContext *>(descriptor);
+    if(!m_distanceFunction || !shapeContext){
+	return 10e16;
+    }
+    return m_distanceFunction->distance(this->getHistogram(), shapeContext->getHistogram());
+}
