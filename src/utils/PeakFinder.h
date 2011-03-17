@@ -34,7 +34,10 @@
 
 class PeakFinder{
     public:
-	/** Finds the indexes of the peaks in a monodimensional signal. */
+	/** Default destructor. */
+	virtual ~PeakFinder() { }
+
+	/** Finds the indexes of the peaks in a onedimensional signal. */
 	virtual void findPeaks(const std::vector<double>& signal, std::vector<unsigned int>& indexes) const = 0;
 	
 	/** Finds the indexes of the peaks in a bidimensional signal. */

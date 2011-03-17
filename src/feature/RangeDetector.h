@@ -51,6 +51,9 @@ class RangeDetector: public MultiScaleDetector {
 		 * @param filterType The smoothing kernel used in the detector.
 		 */
 		RangeDetector(const PeakFinder* peak, unsigned int scales = 5, double sigma = 1.6, double step = 1.4, SmoothingFilterFamily filterType = BESSEL);
+
+	/** Virtual Default destructor. */
+	virtual ~RangeDetector() { }
 	
     protected:
 		/** Computes the bank for the second derivative at different scales. */

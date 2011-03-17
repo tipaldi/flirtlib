@@ -51,6 +51,9 @@ class RansacFeatureSetMatcher: public AbstractFeatureSetMatcher {
 	 */
 	RansacFeatureSetMatcher(double acceptanceThreshold, double successProbability, double inlierProbability, double distanceThreshold, double rigidityThreshold, bool adaptive = false);
 	
+	/** Default destructor. */
+	virtual ~RansacFeatureSetMatcher() { }
+	
 	virtual double matchSets(const std::vector<InterestPoint *> &reference, const std::vector<InterestPoint *> &data, OrientedPoint2D& transformation) const;
 	
 	virtual double matchSets(const std::vector<InterestPoint *> &reference, const std::vector<InterestPoint *> &data, OrientedPoint2D& transformation,

@@ -28,7 +28,7 @@ double RansacFeatureSetMatcher::matchSets(const std::vector<InterestPoint *> &re
     correspondences.clear();
     unsigned int iterations = m_adaptive ? 1e17 : ceil(log(1. - m_successProbability)/log(1. - m_inlierProbability * m_inlierProbability));
     
-    // Compute possible correspondences based on NN thresholding
+    // Compute possible correspondences based on 1-NN thresholding
    std::vector< std::pair<InterestPoint *, InterestPoint *> > possibleCorrespondences;
    for(unsigned int i = 0; i < data.size(); i++){
 	double minCorrespondenceDistance = 1e17;

@@ -35,6 +35,9 @@
 template<class Numeric>
 class HistogramDistance{
     public:
+	/** Default destructor. */
+	virtual ~HistogramDistance() { }
+
 	/** Computes the distance between the first and last histogram (1D). */
 	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& last) const = 0;
 	
@@ -52,6 +55,8 @@ class HistogramDistance{
 template<class Numeric>
 class EuclideanDistance: public HistogramDistance<Numeric>{
     public:
+	/** Default destructor. */
+	virtual ~EuclideanDistance() { }
 	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& last) const;
 	virtual double distance(const std::vector< std::vector<Numeric> >& first, const std::vector< std::vector<Numeric> >& last) const;
 };
@@ -65,6 +70,8 @@ class EuclideanDistance: public HistogramDistance<Numeric>{
 template<class Numeric>
 class Chi2Distance: public HistogramDistance<Numeric>{
     public:
+	/** Default destructor. */
+	virtual ~Chi2Distance() { }
 	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& last) const;
 };
 
@@ -78,6 +85,8 @@ class Chi2Distance: public HistogramDistance<Numeric>{
 template<class Numeric>
 class SymmetricChi2Distance: public HistogramDistance<Numeric>{
     public:
+	/** Default destructor. */
+	virtual ~SymmetricChi2Distance() { }
 	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& last) const;
 };
 
@@ -90,6 +99,8 @@ class SymmetricChi2Distance: public HistogramDistance<Numeric>{
 template<class Numeric>
 class BatthacharyyaDistance: public HistogramDistance<Numeric>{
     public:
+	/** Default destructor. */
+	virtual ~BatthacharyyaDistance() { }
 	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& last) const;
 	virtual double distance(const std::vector< std::vector<Numeric> >& first, const std::vector< std::vector<Numeric> >& last) const;
 };
@@ -103,6 +114,8 @@ class BatthacharyyaDistance: public HistogramDistance<Numeric>{
 template<class Numeric>
 class KullbackLeiblerDistance: public HistogramDistance<Numeric>{
     public:
+	/** Default destructor. */
+	virtual ~KullbackLeiblerDistance() { }
 	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& last) const;
 };
 
@@ -116,6 +129,8 @@ class KullbackLeiblerDistance: public HistogramDistance<Numeric>{
 template<class Numeric>
 class JensenShannonDistance: public HistogramDistance<Numeric>{
     public:
+	/** Default destructor. */
+	virtual ~JensenShannonDistance() { }
 	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& last) const;
 };
 

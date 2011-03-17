@@ -46,6 +46,12 @@ class AbstractFeatureSetMatcher {
 		 * @param acceptanceThreshold The maximum distance (in meters) for a point to be considered in the inlier set.
 		 */
 		AbstractFeatureSetMatcher(double acceptanceThreshold);
+
+		/** 
+		 * Default destructor.
+		 *
+		 */
+		virtual ~AbstractFeatureSetMatcher() { }
 		
 		/**
 		 * Matches two features sets, returning the matching error and the transformation.

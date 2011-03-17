@@ -65,6 +65,9 @@ class CurvatureDetector: public Detector {
 		 */
 		CurvatureDetector(const PeakFinder* peak, unsigned int scales = 5, double sigma = 0.2, double step = 1.4, unsigned int dmst = 4);
 		
+		/** Default destructor. */
+		virtual ~CurvatureDetector() { }
+	
 		virtual unsigned int detect(const LaserReading& reading, std::vector<InterestPoint*>& point) const;
 		
 		/** 

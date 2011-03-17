@@ -55,6 +55,9 @@ class RansacMultiFeatureSetMatcher: public RansacFeatureSetMatcher {
 	
 	virtual double matchSets(const std::vector<InterestPoint *> &reference, const std::vector<InterestPoint *> &data, OrientedPoint2D& transformation,
 				 std::vector< std::pair<InterestPoint *, InterestPoint *> > &correspondences) const;
+
+	/** Default destructor. */
+	virtual ~RansacMultiFeatureSetMatcher() { }
 };
 
 #endif

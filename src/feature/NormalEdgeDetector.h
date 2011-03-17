@@ -46,6 +46,9 @@ class NormalEdgeDetector: public NormalDetector {
 		 */
 		NormalEdgeDetector(const PeakFinder* peak, unsigned int scales = 5, double sigma = 1.6, double step = 1.4, unsigned int window = 3, SmoothingFilterFamily filterType = BESSEL);
 	
+	/** Virtual Default destructor. */
+	virtual ~NormalEdgeDetector() { }
+
     protected:
 		/** Computes the bank for the first derivative at different scales. */
 		virtual void computeDifferentialBank();

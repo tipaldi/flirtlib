@@ -54,6 +54,9 @@ class NormalDetector: public MultiScaleDetector {
 		 */
 		NormalDetector(const PeakFinder* peak, unsigned int scales = 5, double sigma = 1.6, double step = 1.4, unsigned int window = 3, SmoothingFilterFamily filterType = BESSEL);
 		
+	/** Virtual Default destructor. */
+	virtual ~NormalDetector() { }
+
 		/** Sets the window size for the local line fitting. */
 		inline void setWindowSize(unsigned int size)
 			{m_windowSize = size;}

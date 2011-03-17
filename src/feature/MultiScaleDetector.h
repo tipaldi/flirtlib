@@ -64,9 +64,12 @@ class MultiScaleDetector: public Detector {
 		 * @param filterType The smoothing kernel used in the detector.
 		 */
 		MultiScaleDetector(const PeakFinder* peak, unsigned int scales = 5, double sigma = 1.6, double step = 1.4, SmoothingFilterFamily filterType = BESSEL);
-	
+
+		/** Virtual Default destructor. */
+		virtual ~MultiScaleDetector() { }
+
 		virtual unsigned int detect(const LaserReading& reading, std::vector<InterestPoint*>& point) const;
-		
+
 		virtual unsigned int detect(const LaserReading& reading, std::vector<InterestPoint*>& point,
 						std::vector< double >& signal,
 						std::vector< std::vector<double> >& signalSmooth,
@@ -74,7 +77,7 @@ class MultiScaleDetector: public Detector {
 						std::vector< std::vector<unsigned int> >& indexes) const;
 		
 		/** 
-		* Detects the interesting points given the laser reading. It also returns the signals used for the computation.
+		* Detects the interesting points given the laser reading as a 1D signal. It also returns the signals used for the computation.
 		 *
 		 * @return The number of interest points detected.
 		 *

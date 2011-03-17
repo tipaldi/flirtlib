@@ -30,16 +30,22 @@ double AbstractFeatureSetMatcher::verifyHypothesis(const std::vector<InterestPoi
     inlierSet.reserve(maxCorrespondences);
     for(unsigned int i = 0; i < data.size(); i++){
 	double minDistance = 1e17;
+	unsigned int minIndex = 0;
 	const Point2D point1 = transformation.oplus(data[i]->getPosition());
 	for(unsigned int j = 0; j < reference.size(); j++){
 	    const Point2D& point2 = reference[j]->getPosition();
 	    double currentDistance = (point1 - point2) * (point1 - point2);
-	    if(currentDistance < m_acceptanceThreshold){
-		inlierSet.push_back(std::make_pair(data[i], reference[j]));
-		minDistance = minDistance < currentDistance ? minDistance : currentDistance;
-	    } else {
-		minDistance = minDistance < m_acceptanceThreshold ? minDistance : m_acceptanceThreshold;
+	    if(currentDistance < minDistance) {
+		minDistance = currentDistance;
+		minIndex = j;
 	    }
+	}
+// 	std::cout << "Distance: " << minDistance << ", threshold: " << m_acceptanceThreshold << std::endl;
+	if(minDistance < m_acceptanceThreshold){
+// 	    std::cout << "\tAdding correspondence" << std::endl;
+	    inlierSet.push_back(std::make_pair(data[i], reference[minIndex]));
+	} else {
+	    minDistance = m_acceptanceThreshold;
 	}
 	score += minDistance;
     }

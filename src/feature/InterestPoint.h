@@ -58,7 +58,7 @@ class InterestPoint {
 	/** Gets the position and orientation of the interest point. */
 	inline const OrientedPoint2D& getPosition() const 
 	    {return m_position;}
-	
+
 	/** Gets the scale at which the interest point was detected. */
 	inline double getScale() const
 	    {return m_scale;}

@@ -37,7 +37,10 @@
  
 class LogWriter{
     public:
-	/** Write a log to an outputstream. */
+	/** Virtual Default destructor */
+	virtual ~LogWriter() { }
+	
+	/** Write a log to an outputstream */
 	virtual void writeLog(std::ostream& _stream, const std::vector<AbstractReading*>& _log) const = 0;
 };
 

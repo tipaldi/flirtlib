@@ -95,10 +95,11 @@ std::vector<Numeric> gaussianKernel1D(Numeric sigma, unsigned int _kernelSize){
     unsigned int size = (_kernelSize % 2) ? _kernelSize : _kernelSize + 1;
     std::vector<Numeric> result(size);
     Numeric accumulator = 0;
+    if(sigma < 1e-10) sigma = 1e-6;
     
     for(unsigned int i = 0; i < size; i++){
 	Numeric x = i - 0.5*(size-1);
-	result[i] = exp(-x*x/(2*sigma/* * sigma */));
+	result[i] = exp(-x*x/(2*sigma * sigma));
 	accumulator += result[i];
     }
     

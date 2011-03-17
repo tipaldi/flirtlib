@@ -42,6 +42,9 @@ class SimplePeakFinder: public PeakFinder{
 	 * @param minDifference The minimum difference a peak should have with respect to its immediate neighbours.
 	 */
 	SimplePeakFinder(double minValue = 0.0, double minDifference = 0.0);
+
+	/** Default destructor. */
+	virtual ~SimplePeakFinder() { } 
 	
 	virtual void findPeaks(const std::vector<double>& signal, std::vector<unsigned int>& indexes) const;
 	

@@ -38,6 +38,9 @@ class Descriptor {
 	public:
 		/** Clone function for prototyping. It implements the Prototype pattern. */
 		virtual Descriptor* clone() const = 0;
+
+		/** Default destructor. */
+		virtual ~Descriptor() { }
 		
 		/** Abstract interface for computing the distance between two descriptors. The implementation of the actual distance is left to the inherited classes. */
 		virtual double distance(const Descriptor* descriptor) const = 0;
@@ -52,6 +55,10 @@ class Descriptor {
 
 class DescriptorGenerator{
     public:
+
+	/** Default destructor. */
+	virtual ~DescriptorGenerator() { }
+
 		/** Abstract interface for generating a descriptors given an interest point and a laser reading. */
 		virtual Descriptor* describe(const InterestPoint& _point, const LaserReading& reading) = 0;
 		

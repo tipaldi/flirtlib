@@ -46,7 +46,10 @@ enum SensorStreamOffset {
 
 class SensorStream {
     public:
-	/** Get the next reading and advance the stream (const reading). */
+	/** Virtual Default destructor */
+	virtual ~SensorStream() { }
+
+	/** Get the next reading and advance the stream (const reading) */
 	virtual const AbstractReading* next() const = 0;
 	
 	/** Get the current reading without advancing the stream (const reading) */

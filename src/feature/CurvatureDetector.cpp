@@ -181,7 +181,7 @@ unsigned int CurvatureDetector::computeInterestPoints(const LaserReading& readin
 			
 			pose.x =  (worldPoints[pointIndex]).x;
 			pose.y =  (worldPoints[pointIndex]).y;
-			Point2D difference = operatorA[i][j] - worldPoints[pointIndex];
+			Point2D difference = operatorA[i][indexes[i][j]] - worldPoints[pointIndex];
 			pose.theta = atan2(difference.y, difference.x);
 			
 			bool exists = false;

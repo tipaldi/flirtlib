@@ -44,6 +44,9 @@ class SimpleMinMaxPeakFinder: public SimplePeakFinder{
 	 */
 	SimpleMinMaxPeakFinder(double minValue = 0.0, double minDifference = 0.0);
 	
+	/** Default destructor. */
+	virtual ~SimpleMinMaxPeakFinder() { }
+
 	virtual bool isPeak(const std::vector<double>& signal, unsigned int index) const;
 };
 

@@ -40,6 +40,9 @@
 
 class ShapeContext: public Descriptor{
     public:
+	/** Default destructor. */
+	virtual ~ShapeContext() { }
+	    
 		virtual Descriptor* clone() const;
 
 		/** 
@@ -101,6 +104,9 @@ class ShapeContextGenerator: public DescriptorGenerator {
 		 */
 		ShapeContextGenerator(const std::vector<double>& rhoEdges, const std::vector<double>& phiEdges);
 		
+	/** Default destructor. */
+	virtual ~ShapeContextGenerator() { }
+	
 		virtual Descriptor* describe(const InterestPoint& point, const LaserReading& reading);
 		
 		virtual Descriptor* describe(const OrientedPoint2D& point, const LaserReading& reading);

@@ -45,6 +45,9 @@ class NormalBlobDetector: public NormalDetector {
 		 * @param filterType The smoothing kernel used in the detector.
 		 */
 		NormalBlobDetector(const PeakFinder* peak, unsigned int scales = 5, double sigma = 1.6, double step = 1.4, unsigned int window = 3, SmoothingFilterFamily filterType = BESSEL);
+
+	/** Default destructor. */
+	virtual ~NormalBlobDetector() { }
 	
     protected:
 		/** Computes the bank for the second derivative at different scales. */

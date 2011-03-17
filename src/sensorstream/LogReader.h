@@ -36,7 +36,10 @@
  
 class LogReader{
     public:
-	/** Read a log from an inputstream. */ 
+	/** Virtual Default destructor */
+	virtual ~LogReader() { }
+	
+	/** Read a log from an inputstream */
 	virtual void readLog(std::istream& _stream, std::vector<AbstractReading*>& _log) const = 0;
 };
 

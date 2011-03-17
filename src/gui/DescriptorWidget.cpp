@@ -17,19 +17,40 @@ DescriptorWidget::DescriptorWidget(QWidget *parent):
 void DescriptorWidget::addDescriptor(QGraphicsItem * item){
     if(!item) return;
     QRectF bounding = item->boundingRect();
-    float adjust = 10;
-    float width = adjust + bounding.width()/2;
-    float height = adjust + bounding.height()/2;
+    float adjust = 10.;
+    float width = adjust + bounding.width()/2.;
+    float height = adjust + bounding.height()/2.;
     if(!m_items.size()){
 	item->setPos(width, height);
     } else {
-	QPointF position = m_items.back()->pos();
-	item->setPos(position.x() + width * 2, height);
+	item->setPos(m_position.x() + width * 2., m_position.y());
     }
     m_items.push_back(item);
     m_scene->addItem(item);
+    m_position = m_items.back()->pos();
     update();
 }
+
+void DescriptorWidget::addSeparator() {
+    QRectF bounding = m_items.back()->boundingRect();
+    float adjust = 10.;
+    float height = adjust + bounding.height()/2.;
+    m_position.rx() += adjust + bounding.width()/2.;
+    QLineF line(m_position.x(), m_position.y() - height, m_position.x(), m_position.y() + height);
+    QPen pen;
+    pen.setWidth(3);
+    m_scene->addLine(line, pen);
+    m_position.rx() += adjust;
+}
+
+void DescriptorWidget::addNewLine() {
+    QRectF bounding = m_items.front()->boundingRect();
+    float adjust = 10.;
+    float width = adjust + bounding.width()/2.;
+    float height = adjust + bounding.height()/2.;
+    m_position.rx() = -width;
+    m_position.ry() += height*2.;
+}    
 
 void DescriptorWidget::clear(){
     if(m_scene) delete m_scene;

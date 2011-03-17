@@ -36,6 +36,9 @@
 
 class Detector {
     public:
+		/** Default destructor. */
+		virtual ~Detector() { }
+
 		/** 
 		 * Detects the interesting points given the laser reading. 
 		 *

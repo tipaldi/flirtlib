@@ -44,7 +44,7 @@ void MultiScaleDetector::detect(const std::vector<double>& signal,
 	int offsetRange = floor((int)m_filterBank[i].size()/2.0);
 	signalSmooth[i] = convolve1D(signal, m_filterBank[i], -offsetRange); 
 	signalDiff[i] = convolve1D(signalSmooth[i], m_differentialBank[i], -1);
-	for(unsigned int j = offsetRange + 1; j < signal.size() - offsetRange - 1; j++){
+	for(unsigned int j = offsetRange; j < signal.size() - offsetRange; j++){
 	    if(m_peakFinder->isPeak(signalDiff[i], j)){
 		indexes[i].push_back(j);
 	    }

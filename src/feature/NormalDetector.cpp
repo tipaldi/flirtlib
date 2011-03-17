@@ -80,7 +80,7 @@ unsigned int NormalDetector::computeInterestPoints(const LaserReading& reading, 
 			OrientedPoint2D pose;
 			unsigned int pointIndex = maxRangeMapping[indexes[i][j]];
 		
-					// Reomoving the detection in the background and pushing it to the foreground
+			// Reomoving the detection in the background and pushing it to the foreground
 			double rangeBefore = (pointIndex > 1)? reading.getRho()[pointIndex - 1] : reading.getMaxRange();
 			double rangeAfter = (pointIndex < worldPoints.size() - 1)? reading.getRho()[pointIndex + 1] : reading.getMaxRange();
 			double rangeCurrent = reading.getRho()[pointIndex];

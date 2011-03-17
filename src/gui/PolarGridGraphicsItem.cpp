@@ -7,6 +7,7 @@
 PolarGridGraphicsItem::PolarGridGraphicsItem(const std::vector< std::vector<double> > *grid, const std::vector<double> *phiEdges, const std::vector<double> *rhoEdges, QGraphicsItem* parent):
     QGraphicsItem(parent),
     m_grid(NULL),
+    m_flatGrid(NULL),
     m_phiEdges(NULL),
     m_rhoEdges(NULL),
     m_maxValue(0),
@@ -26,9 +27,31 @@ PolarGridGraphicsItem::PolarGridGraphicsItem(const std::vector< std::vector<doub
     setFlag(QGraphicsItem::ItemIsSelectable);
 }
 
+PolarGridGraphicsItem::PolarGridGraphicsItem(const std::vector< double > *grid, const std::vector<double> *phiEdges, const std::vector<double> *rhoEdges, QGraphicsItem* parent):
+    QGraphicsItem(parent),
+    m_grid(NULL),
+    m_flatGrid(NULL),
+    m_phiEdges(NULL),
+    m_rhoEdges(NULL),
+    m_maxValue(0),
+    m_color(Qt::black)
+{
+    if(grid && phiEdges && rhoEdges && grid->size() == (phiEdges->size() - 1) * (rhoEdges->size() - 1)){
+	m_flatGrid = grid;
+	m_phiEdges = phiEdges;
+	m_rhoEdges = rhoEdges;
+	for(unsigned int i = 0; i < grid->size(); i ++){
+	    if((*grid)[i] > m_maxValue ) m_maxValue = (*grid)[i];
+	}
+    }
+    
+    setFlag(QGraphicsItem::ItemIsSelectable);
+}
+
 void PolarGridGraphicsItem::setGrid(const std::vector< std::vector<double> > *grid, const std::vector<double> *phiEdges, const std::vector<double> *rhoEdges){
     if(grid && phiEdges && rhoEdges && grid->size() && grid->size() == phiEdges->size() - 1 && (*grid)[0].size() == rhoEdges->size() - 1){
 	m_grid = grid;
+	m_flatGrid = NULL;
 	m_phiEdges = phiEdges;
 	m_rhoEdges = rhoEdges;
 	m_maxValue = 0.;
@@ -39,6 +62,24 @@ void PolarGridGraphicsItem::setGrid(const std::vector< std::vector<double> > *gr
 	}
     } else {
 	m_grid = NULL;
+	m_phiEdges = NULL;
+	m_rhoEdges = NULL;
+	return;
+    }
+}
+
+void PolarGridGraphicsItem::setFlatGrid(const std::vector< double > *grid, const std::vector<double> *phiEdges, const std::vector<double> *rhoEdges){
+    if(grid && phiEdges && rhoEdges && grid->size() == (phiEdges->size() - 1) * (rhoEdges->size() - 1) ){
+	m_flatGrid = grid;
+	m_grid = NULL;
+	m_phiEdges = phiEdges;
+	m_rhoEdges = rhoEdges;
+	m_maxValue = 0.;
+	for(unsigned int i = 0; i < grid->size(); i ++){
+		if((*grid)[i] > m_maxValue ) m_maxValue = (*grid)[i];
+	}
+    } else {
+	m_flatGrid = NULL;
 	m_phiEdges = NULL;
 	m_rhoEdges = NULL;
 	return;
@@ -56,6 +97,32 @@ void PolarGridGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsI
 	    double start = normAngle((*m_phiEdges)[i], 0.);
 	    for(unsigned int j = 0; j < (*m_grid)[i].size(); j++){
 		float value = m_maxValue == 0.? 0. : (*m_grid)[i][j]/(m_maxValue + 0.5);
+		m_color.setHsvF(m_color.hueF(), m_color.saturationF(), 1 - value); 
+		double inner = double(128) * ((*m_rhoEdges)[j] - minEdge)/(maxEdge - minEdge);
+		double outer = double(128) * ((*m_rhoEdges)[j + 1] - minEdge)/(maxEdge - minEdge);
+		
+		QPainterPath path;
+		path.moveTo(inner/2. * cos(start), -inner/2. * sin(start));
+		path.arcTo(-outer/2., -outer/2., outer, outer, rad2deg(start), rad2deg(sweep));
+		path.arcTo(-floor(inner/2), -floor(inner/2), floor(inner), floor(inner), rad2deg(start + sweep), rad2deg(-sweep));
+		path.closeSubpath();
+		painter->setBrush(m_color);
+		painter->drawPath(path);
+	    }
+	}
+	painter->drawText(QRectF(-64, 135 - 64, 128, 25), Qt::AlignCenter, m_text);
+    } else if(m_flatGrid) {
+	painter->setPen(Qt::black);
+	m_color.setHsvF(m_color.hueF(),1.f,m_color.valueF());
+	double sweep = normAngle(2*M_PI/(m_phiEdges->size() - 1), 0.);
+	double maxEdge = m_rhoEdges->back();
+	double minEdge = m_rhoEdges->front();
+	for(unsigned int i = 0; i < m_phiEdges->size() - 1; i ++){
+	    double start = normAngle((*m_phiEdges)[i], 0.);
+	    unsigned int edges = (*m_rhoEdges).size() - 1;
+	    for(unsigned int j = 0; j < edges; j++){
+		unsigned int index = i * edges + j;
+		float value = m_maxValue == 0.? 0. : (*m_flatGrid)[index]/(m_maxValue + 0.5);
 		m_color.setHsvF(m_color.hueF(), m_color.saturationF(), 1 - value); 
 		double inner = double(128) * ((*m_rhoEdges)[j] - minEdge)/(maxEdge - minEdge);
 		double outer = double(128) * ((*m_rhoEdges)[j + 1] - minEdge)/(maxEdge - minEdge);

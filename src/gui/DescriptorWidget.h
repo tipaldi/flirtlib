@@ -38,6 +38,10 @@ class DescriptorWidget: public QGraphicsView {
 	
 	void addDescriptor(QGraphicsItem * item);
 
+	void addSeparator();
+
+	void addNewLine();
+
 	void clear();
 	
     signals:
@@ -50,6 +54,8 @@ class DescriptorWidget: public QGraphicsView {
 	
 	QGraphicsScene * m_scene;
 	QVector<QGraphicsItem * > m_items;
+	QPointF m_position;
+
 
 };
 

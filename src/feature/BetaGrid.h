@@ -42,7 +42,9 @@
 class BetaGrid: public Descriptor{
     public:
 		virtual Descriptor* clone() const;
-
+		
+		/** Default destructor. */
+		virtual ~BetaGrid() { }
 		/** 
 		 * Implements the distance function between two shape context descriptors. 
 		 * The actual distance is computed using the histogram distance defined in #m_distanceFunction .
@@ -129,6 +131,9 @@ class BetaGridGenerator: public DescriptorGenerator {
 		 * its angular distance between phiEdges[j] and phiEdges[j + 1]
 		 */
 		BetaGridGenerator(const std::vector<double>& rhoEdges, const std::vector<double>& phiEdges);
+
+		/** Default destructor. */
+	virtual ~BetaGridGenerator() { }
 		
 		virtual Descriptor* describe(const InterestPoint& point, const LaserReading& reading);
 		
@@ -141,27 +146,27 @@ class BetaGridGenerator: public DescriptorGenerator {
 		 * @param binPhi The number of bins in the angular coordinate of the descriptor.
 		 */
 		void setEdges(double minRho, double maxRho, unsigned int binRho, unsigned int binPhi);
-		
+	
 		/** Gets the minimum distance for a point to be included in the descriptor. */
 		inline double getMinRho() const
 			{return m_rhoEdges.front();}
-		
+	
 		/** Gets the maximum distance for a point to be included in the descriptor. */
 		inline double getMaxRho() const
 			{return m_rhoEdges.back();}
-		
+	
 		/** Gets the number of bins in the radial coordinate of the descriptor. */
 		inline unsigned int getBinRho() const
 			{return m_rhoEdges.size() - 1;}
-		
+	
 		/** Gets the number of bins in the angular coordinate of the descriptor. */
 		inline unsigned int getBinPhi() const
 			{return m_phiEdges.size() - 1;}
-		
+	
 		/** Gets the vector containing the edges of the radial coordinate of the desciptor. */
 		inline const std::vector<double>& getRhoEdges() const
 			{return m_rhoEdges;}
-		
+	
 		/** Gets the vector containing the edges of the angular coordinate of the desciptor. */
 		inline const std::vector<double>& getPhiEdges() const
 			{return m_phiEdges;}

@@ -34,7 +34,9 @@
 
 class CorrespondenceRenderer: public AbstractRenderer {
     public:
-	CorrespondenceRenderer(const std::vector< std::pair<Point2D, Point2D> > *correspondences, const std::vector< double > *m_distances = 0); 
+	CorrespondenceRenderer(const std::vector< std::pair<Point2D, Point2D> > *correspondences, const std::vector< double > *m_distances = 0);
+	
+	virtual ~CorrespondenceRenderer() { }
 	
 /*	CorrespondenceRenderer(const CorrespondenceRenderer& _renderer); 
 	
