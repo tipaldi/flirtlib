@@ -49,6 +49,8 @@ unsigned int m_valid[8] = {0};
 
 struct timeval detectTime, describeTime, ransacTime;
 
+unsigned int m_localSkip = 1;
+
 void help(){
 	std::cerr << "FLIRTLib version 0.9b - authors Gian Diego Tipaldi and Kai O. Arras" << std::endl
 			  << "Usage: ransacLoopClosureTest -filename <logfile> [options] " << std::endl
@@ -113,7 +115,7 @@ void match(unsigned int position)
     double angularErrors[m_pointsReference.size()];
     struct timeval start, end, diff, sum;
     for(unsigned int i = 0; i < m_pointsReference.size(); i++){
-	if(i == position) {
+	if(fabs(double(i) - double(position)) < m_localSkip) {
 	    results[i] = 1e17;
 	    inliers[i] = 0;
 	    linearErrors[i] = 1e17;
@@ -224,8 +226,10 @@ void countLog(){
 	    bar[progress/2] = '#';
 	    std::cout << "\rCounting points  [" << bar << "] " << progress << "%" << std::flush;
 	}
+	if(m_pointsReference[i].size()){
 	flirtNum += m_pointsReference[i].size();
 	count++;
+	}
     }
     flirtNum=count?flirtNum/double(count):0.;
     std::cout << " done.\nFound " << flirtNum << " FLIRT features per scan." << std::endl;
@@ -286,6 +290,9 @@ int main(int argc, char **argv){
 		} else if(strncmp("-distance", argv[i], sizeof("-distance")) == 0 ){
 			distanceType = atoi(argv[++i]);
 			i++;
+		} else if(strncmp("-strategy", argv[i], sizeof("-strategy")) == 0 ){
+			strategy = atoi(argv[++i]);
+			i++;
 		} else if(strncmp("-baseSigma", argv[i], sizeof("-baseSigma")) == 0 ){
 			baseSigma = strtod(argv[++i], NULL);
 			i++;
@@ -305,7 +312,7 @@ int main(int argc, char **argv){
 			dmst = atoi(argv[++i]);
 			i++;
 		} else if(strncmp("-window", argv[i], sizeof("-window")) == 0 ){
-			scale = atoi(argv[++i]);
+			window = atoi(argv[++i]);
 			i++;
 		} else if(strncmp("-acceptanceSigma", argv[i], sizeof("-acceptanceSigma")) == 0 ){
 			acceptanceSigma = strtod(argv[++i], NULL);
@@ -319,6 +326,12 @@ int main(int argc, char **argv){
 		} else if(strncmp("-matchingThreshold", argv[i], sizeof("-matchingThreshold")) == 0 ){
 			matchingThreshold = strtod(argv[++i], NULL);
 			i++;
+		} else if(strncmp("-localSkip", argv[i], sizeof("-localSkip")) == 0 ){
+			m_localSkip = atoi(argv[++i]);
+			i++;
+		} else if(strncmp("-help", argv[i], sizeof("-localSkip")) == 0 ){
+			help();
+			exit(0);
 		} else {
 			i++;
 		}

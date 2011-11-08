@@ -43,6 +43,8 @@ double AbstractFeatureSetMatcher::verifyHypothesis(const std::vector<InterestPoi
 // 	std::cout << "Distance: " << minDistance << ", threshold: " << m_acceptanceThreshold << std::endl;
 	if(minDistance < m_acceptanceThreshold){
 // 	    std::cout << "\tAdding correspondence" << std::endl;
+// 	    std::cout << "\t\t" << data[i]->getPosition() << " <-> " << reference[minIndex]->getPosition() << std::endl;
+// 	    std::cout << "\t\t" << point1 << " <-> " << reference[minIndex]->getPosition() << std::endl;
 	    inlierSet.push_back(std::make_pair(data[i], reference[minIndex]));
 	} else {
 	    minDistance = m_acceptanceThreshold;

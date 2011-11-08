@@ -1,5 +1,7 @@
 #include "CurvatureDetector.h"
 
+#include <utils/Regression.h>
+
 CurvatureDetector::CurvatureDetector(const PeakFinder* peak, unsigned int scales, double sigma, double step, unsigned int dmst):
     m_peakFinder(peak),
     m_scaleNumber(scales),
@@ -116,7 +118,7 @@ void CurvatureDetector::detect(const Graph& graph, const std::vector<Point2D>& g
 		double currentScale = m_scales[scale];
 		double normalizer = sqrt(2*M_PI)*currentScale;
 		std::vector<double> densities(vertexNumber, 0.);
-		operatorA[scale].resize(vertexNumber);
+		operatorA[scale].resize(vertexNumber, Point2D());
 		signalDiff[scale].resize(vertexNumber,0.);
 		double weights[vertexNumber][vertexNumber];
 		double weightNormalizer[vertexNumber];
@@ -203,6 +205,10 @@ unsigned int CurvatureDetector::computeInterestPoints(const LaserReading& readin
 				Point2D diff2 = pose - worldPoints[k];
 				if(hypot(diff2.x, diff2.y) < distance) support.push_back(worldPoints[k]);
 			}
+
+	    LineParameters param = computeNormals(support);
+	    pose.theta = normAngle(param.alpha, - M_PI);    
+	    
 			InterestPoint *interest = new InterestPoint(pose, distance);
 		//  InterestPoint *interest = new InterestPoint(pose, m_scales[i]);
 			interest->setSupport(support);

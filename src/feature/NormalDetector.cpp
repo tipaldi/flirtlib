@@ -107,9 +107,13 @@ unsigned int NormalDetector::computeInterestPoints(const LaserReading& reading, 
 			}
 			if(exists) continue;
 
-			unsigned int first = pointIndex - floor((int)m_filterBank[i].size()/2.0);
-			unsigned int last = pointIndex + floor((int)m_filterBank[i].size()/2.0);
-			std::vector<Point2D> support(reading.getWorldCartesian().begin() + first, reading.getWorldCartesian().begin() + last + 1);
+	    unsigned int first = indexes[i][j] - floor((int)m_filterBank[i].size()/2.0);
+	    unsigned int last = indexes[i][j] + floor((int)m_filterBank[i].size()/2.0);
+	    std::vector<Point2D> support(last - first + 1);
+	    for(unsigned int p = 0; p < support.size(); p++) {
+		support[p] = Point2D(worldPoints[maxRangeMapping[p + first]]);
+	    }
+	    
 			double maxDistance = -1e20;
 			for(unsigned int k = 0; k < support.size(); k++){
 				double distance = sqrt((pose.x - support[k].x)*(pose.x - support[k].x) + (pose.y - support[k].y)*(pose.y - support[k].y));

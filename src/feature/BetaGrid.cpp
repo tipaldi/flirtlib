@@ -42,20 +42,59 @@ Descriptor* BetaGridGenerator::describe(const OrientedPoint2D& point, const Lase
     shape->getHit().resize(m_phiEdges.size() - 1, std::vector<double>(m_rhoEdges.size() - 1, 0.));
     shape->getMiss().resize(m_phiEdges.size() - 1, std::vector<double>(m_rhoEdges.size() - 1, 0.));
     
-    const Point2D& position = reading.getLaserPose();
+    const OrientedPoint2D& position = reading.getLaserPose();
+    const Point2D delta = position.ominus(point);
+    double alpha = atan2(delta.y, delta.x), alphaDiff = atan2(m_rhoEdges.back(), hypot(delta.x, delta.y));
+    double minAlpha = alpha - alphaDiff, maxAlpha = alpha + alphaDiff;
     
-    for(unsigned int rho = 0; rho < m_rhoEdges.size() - 1; rho++){
+    const std::vector<double>& readingPhi = reading.getPhi();
+    double normalizer = double(readingPhi.size())/double(readingPhi.back() - readingPhi.front());
+    unsigned int minIndex = normalizer * (minAlpha - readingPhi.front());
+    minIndex = std::max(0, int(minIndex) - 1);
+    unsigned int maxIndex = normalizer * (maxAlpha - readingPhi.front());
+    maxIndex = std::min(readingPhi.size(), size_t(maxIndex + 2));
+    
+    unsigned int pointIndex = normalizer * double(alpha - readingPhi.front());
+/*    std::cout << "min phi: " << readingPhi.front() << ", max phi = " << readingPhi.back() << std::endl;
+    std::cout << "index double no norm= " << double(alpha - readingPhi.front())/double(readingPhi.front() - readingPhi.back()) << std::endl;
+    std::cout << "index double norm = " << normalizer * double(alpha - readingPhi.front()) << std::endl;
+    std::cout << "Point alpha: " << alpha << ", index = " << pointIndex << std::endl;*/
+    
+    
 	for(unsigned int phi = 0; phi < m_phiEdges.size() - 1; phi++){
+	double angleBorder = M_PI/180.*5.;
+	double angle1 = m_phiEdges[phi] + point.theta - angleBorder;
+	double angle2 = m_phiEdges[phi+1] + point.theta + angleBorder;
+	double cos1 = cos(angle1), sin1 = sin(angle1), cos2 = cos(angle2), sin2 = sin(angle2);
 /*	    shape->getMiss()[phi][rho] = 1;
 	    shape->getHit()[phi][rho] = 1;*/
-	    double angle1 = m_phiEdges[phi] + point.theta;
-	    double angle2 = m_phiEdges[phi+1] + point.theta;
-	    double cos1 = cos(angle1), sin1 = sin(angle1), cos2 = cos(angle2), sin2 = sin(angle2);
-	    const Point2D point1(point.x + cos1 * m_rhoEdges[rho], point.y + sin1 * m_rhoEdges[rho]);
-	    const Point2D point2(point.x + cos1 * m_rhoEdges[rho+1], point.y + sin1 * m_rhoEdges[rho+1]);
-	    const Point2D point3(point.x + cos2 * m_rhoEdges[rho+1], point.y + sin2 * m_rhoEdges[rho+1]);
-	    const Point2D point4(point.x + cos2 * m_rhoEdges[rho], point.y + sin2 * m_rhoEdges[rho]);
-	    for(unsigned int i = 0; i < reading.getWorldCartesian().size(); i++){
+	double border = 0.05;
+	const Point2D point1(point.x + cos1 * (m_rhoEdges[0]), point.y + sin1 * (m_rhoEdges[0]));
+	const Point2D point2(point.x + cos1 * (m_rhoEdges[1] + border), point.y + sin1 * (m_rhoEdges[1] + border));
+	const Point2D point3(point.x + cos2 * (m_rhoEdges[1] + border), point.y + sin2 * (m_rhoEdges[1] + border));
+	const Point2D point4(point.x + cos2 * (m_rhoEdges[0]), point.y + sin2 * (m_rhoEdges[0]));
+//  	    for(unsigned int i = 0; i < reading.getWorldCartesian().size(); i++){
+	for(unsigned int i = minIndex; i < maxIndex; i++){
+	    int accumulator = 0;
+	    const Point2D& endPoint = reading.getWorldCartesian()[i];
+	    if(reading.getRho()[i] >= reading.getMaxRange()) continue;
+	    accumulator += intersectSegment2Segment(position, endPoint, point1, point2);
+	    accumulator += intersectSegment2Arc(position, endPoint, point2, point3, point);
+	    accumulator += intersectSegment2Segment(position, endPoint, point4, point3);
+	    accumulator += intersectSegment2Arc(position, endPoint, point1, point4, point);
+	    shape->getMiss()[phi][0] += accumulator >= 2.;
+	    shape->getHit()[phi][0] += accumulator == 1.;
+	}
+	for(unsigned int rho = 1; rho < m_rhoEdges.size() - 1; rho++){
+/*	    shape->getMiss()[phi][rho] = 1;
+	    shape->getHit()[phi][rho] = 1;*/
+// 	    double border = 0.05;
+	    const Point2D point1(point.x + cos1 * (m_rhoEdges[rho] - border), point.y + sin1 * (m_rhoEdges[rho] - border));
+	    const Point2D point2(point.x + cos1 * (m_rhoEdges[rho+1] + border), point.y + sin1 * (m_rhoEdges[rho+1] + border));
+	    const Point2D point3(point.x + cos2 * (m_rhoEdges[rho+1] + border), point.y + sin2 * (m_rhoEdges[rho+1] + border));
+	    const Point2D point4(point.x + cos2 * (m_rhoEdges[rho] - border), point.y + sin2 * (m_rhoEdges[rho] - border));
+//  	    for(unsigned int i = 0; i < reading.getWorldCartesian().size(); i++){
+	    for(unsigned int i = minIndex; i < maxIndex; i++){
 		int accumulator = 0;
 		const Point2D& endPoint = reading.getWorldCartesian()[i];
 		if(reading.getRho()[i] >= reading.getMaxRange()) continue;

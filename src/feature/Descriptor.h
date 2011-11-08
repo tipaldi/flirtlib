@@ -56,8 +56,8 @@ class Descriptor {
 class DescriptorGenerator{
     public:
 
-	/** Default destructor. */
-	virtual ~DescriptorGenerator() { }
+		/** Default destructor. */
+		virtual ~DescriptorGenerator() { }
 
 		/** Abstract interface for generating a descriptors given an interest point and a laser reading. */
 		virtual Descriptor* describe(const InterestPoint& _point, const LaserReading& reading) = 0;

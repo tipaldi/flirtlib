@@ -45,7 +45,7 @@
 
 class CarmenLogReader: public LogReader{
     public:
-	/// Virtual Default destructor
+	/** Virtual Default destructor. */
 	virtual ~CarmenLogReader() { }
 	/** Read a log from an inputstream. */
 	virtual void readLog(std::istream& _stream, std::vector<AbstractReading*>& _log) const;
