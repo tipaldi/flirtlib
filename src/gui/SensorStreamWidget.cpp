@@ -1,5 +1,5 @@
 #include "SensorStreamWidget.h"
-#include "SensorStreamWidget.moc"
+
 
 SensorStreamWidget::SensorStreamWidget(QWidget * _parent):
     QFrame(_parent),
@@ -72,3 +72,5 @@ void SensorStreamWidget::buildGui(){
     connect(m_sensorSlider, SIGNAL(valueChanged(int)), this, SLOT(seekPosition(int)));
     connect(m_sensorBox, SIGNAL(valueChanged(int)), this, SLOT(seekPosition(int)));
 }
+
+#include "SensorStreamWidget.moc"
