@@ -35,8 +35,8 @@ DescriptorGenerator *m_descriptor = NULL;
 
 RansacFeatureSetMatcher *m_ransac = NULL;
 
-double angErrorTh = 0.2;
-double linErrorTh = 0.5;
+double angErrorTh = 0.2, angGtTh = 1.0;
+double linErrorTh = 0.5, linGtTh = 3.0;
 
 std::vector< std::vector<InterestPoint *> > m_pointsReference;
 std::vector< OrientedPoint2D > m_posesReference;
@@ -46,6 +46,7 @@ unsigned int corresp[] = {0, 3, 5, 7, 9, 11, 13, 15};
 double m_error[8] = {0.}, m_errorC[8] = {0.}, m_errorR[8] = {0.};
 unsigned int m_match[8] = {0}, m_matchC[8] = {0}, m_matchR[8] = {0};
 unsigned int m_valid[8] = {0};
+unsigned int m_exist[8] = {0};
 
 struct timeval detectTime, describeTime, ransacTime;
 
@@ -114,6 +115,8 @@ void match(unsigned int position)
     double linearErrors[m_pointsReference.size()];
     double angularErrors[m_pointsReference.size()];
     struct timeval start, end, diff, sum;
+    bool existing = false;
+    
     for(unsigned int i = 0; i < m_pointsReference.size(); i++){
 	if(fabs(double(i) - double(position)) < m_localSkip) {
 	    results[i] = 1e17;
@@ -122,6 +125,8 @@ void match(unsigned int position)
 	    angularErrors[i] = 1e17;
 	    continue;
 	}
+	OrientedPoint2D deltaGT = m_posesReference[position] - m_posesReference[i]; 
+	existing = existing || ((deltaGT * deltaGT ) < (2 * linGtTh * linGtTh) && (deltaGT.theta * deltaGT.theta) < (2 * angGtTh * angGtTh));
 	OrientedPoint2D transform;
 	std::vector< std::pair<InterestPoint*, InterestPoint* > > correspondences;
 	gettimeofday(&start,NULL);
@@ -145,6 +150,9 @@ void match(unsigned int position)
 	double linErrorR = 1e17, angErrorR = 1e17;
 	bool valid = false;
         for(unsigned int i = 0; i < m_pointsReference.size(); i++){
+	    if(fabs(double(i) - double(position)) < m_localSkip) {
+		continue;
+	    }
 	    if(linError + angError > linearErrors[i] + angularErrors[i]) {
 		linError = linearErrors[i];
 		angError = angularErrors[i];
@@ -163,8 +171,10 @@ void match(unsigned int position)
 	}
 	
 	
+	bool found = false;
 	if(valid){
-	    m_match[c] += (linError <= (linErrorTh * linErrorTh) && angError <= (angErrorTh * angErrorTh) );
+	    found = (linError <= (linErrorTh * linErrorTh) && angError <= (angErrorTh * angErrorTh) );
+	    m_match[c] += found;
 	    m_matchC[c] += (linErrorC <= (linErrorTh * linErrorTh) && angErrorC <= (angErrorTh * angErrorTh) );
 	    m_matchR[c] += (linErrorR <= (linErrorTh * linErrorTh) && angErrorR <= (angErrorTh * angErrorTh) );
 	    
@@ -174,6 +184,7 @@ void match(unsigned int position)
 	    
 	    m_valid[c]++;
 	}
+	m_exist[c] += existing || found;
     }
 
 }
@@ -496,19 +507,19 @@ int main(int argc, char **argv){
 	matchOut << "# Number of matches according to various strategies" << std::endl;
     matchOut << "# The valid matches are the one with at least n correspondences in the inlier set " << std::endl;
     matchOut << "# where n = {0, 3, 5, 7, 9, 11, 13, 15}, one for each line " << std::endl;
-    matchOut << "# optimal \t correspondence \t residual \v valid" << std::endl;
+    matchOut << "# optimal \t correspondence \t residual \t valid \t existing" << std::endl;
     
 	errorOut << "# Mean error according to various strategies" << std::endl;
 	errorOut << "# The valid matches are the one with at least n correspondences in the inlier set " << std::endl;
     errorOut << "# where n = {0, 3, 5, 7, 9, 11, 13, 15}, one for each line " << std::endl;
-    errorOut << "# optimal \t correspondence \t residual \v valid" << std::endl;
+    errorOut << "# optimal \t correspondence \t residual \t valid \t existing" << std::endl;
 	
 	timeOut << "# Total time spent for the various steps" << std::endl;
 	timeOut << "# detection \t description \t RANSAC" << std::endl;
 
     for(unsigned int c = 0; c < 8; c++){
-      matchOut << m_match[c] << "\t" << m_matchC[c] << "\t" << m_matchR[c] << "\t" << m_valid[c] << std::endl;
-      errorOut << m_error[c]/m_valid[c] << "\t" << m_errorC[c]/m_valid[c] << "\t" << m_errorR[c]/m_valid[c] << "\t" << m_valid[c] << std::endl;
+      matchOut << m_match[c] << "\t" << m_matchC[c] << "\t" << m_matchR[c] << "\t" << m_valid[c] << "\t" << m_exist[c] << std::endl;
+      errorOut << m_error[c]/m_valid[c] << "\t" << m_errorC[c]/m_valid[c] << "\t" << m_errorR[c]/m_valid[c] << "\t" << m_valid[c] << "\t" << m_exist[c] << std::endl;
     }
     timeOut << double(detectTime.tv_sec) + 1e-06 * double(detectTime.tv_usec) << "\t"
 	    << double(describeTime.tv_sec) + 1e-06 * double(describeTime.tv_usec) << "\t"
