@@ -13,7 +13,7 @@ PolarGridGraphicsItem::PolarGridGraphicsItem(const std::vector< std::vector<doub
     m_maxValue(0),
     m_color(Qt::black)
 {
-    if(grid && phiEdges && rhoEdges && grid->size() && grid->size() == phiEdges->size() - 1 && (*grid)[0].size() == rhoEdges->size() - 1){
+    if(grid && phiEdges && rhoEdges && grid->size() == phiEdges->size() - 1 && (*grid)[0].size() == rhoEdges->size() - 1){
 	m_grid = grid;
 	m_phiEdges = phiEdges;
 	m_rhoEdges = rhoEdges;
@@ -49,7 +49,7 @@ PolarGridGraphicsItem::PolarGridGraphicsItem(const std::vector< double > *grid, 
 }
 
 void PolarGridGraphicsItem::setGrid(const std::vector< std::vector<double> > *grid, const std::vector<double> *phiEdges, const std::vector<double> *rhoEdges){
-    if(grid && phiEdges && rhoEdges && grid->size() && grid->size() == phiEdges->size() - 1 && (*grid)[0].size() == rhoEdges->size() - 1){
+    if(grid && phiEdges && rhoEdges && grid->size() == phiEdges->size() - 1 && (*grid)[0].size() == rhoEdges->size() - 1){
 	m_grid = grid;
 	m_flatGrid = NULL;
 	m_phiEdges = phiEdges;
@@ -87,6 +87,7 @@ void PolarGridGraphicsItem::setFlatGrid(const std::vector< double > *grid, const
 }
 
 void PolarGridGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
+    painter->translate(64,64);
     if(m_grid){
 	painter->setPen(Qt::black);
 	m_color.setHsvF(m_color.hueF(),1.f,m_color.valueF());
@@ -141,7 +142,7 @@ void PolarGridGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsI
 }
 
 QRectF PolarGridGraphicsItem::boundingRect() const{
-    return QRectF(-64, -64, 128, 160);
+     return QRectF(0, 0, 128, 160);
 }
 
 QPainterPath PolarGridGraphicsItem::shape() const{
