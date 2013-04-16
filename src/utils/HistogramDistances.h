@@ -43,6 +43,14 @@ class HistogramDistance{
 	
 	/** Computes the distance between the first and last histogram (2D). */
 	virtual double distance(const std::vector< std::vector<Numeric> >& first, const std::vector< std::vector<Numeric> >& last) const;
+
+	/** Computes the weighted distance between the first and last histogram (1D). */
+	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& weightFirst,
+				const std::vector<Numeric>& last, const std::vector<Numeric>& weightLast) const = 0;
+
+	/** Computes the weighted distance between the first and last histogram (2D). */
+	virtual double distance(const std::vector< std::vector<Numeric> >& first, const std::vector< std::vector<Numeric> >& weightFirst, 
+				const std::vector< std::vector<Numeric> >& last, const std::vector< std::vector<Numeric> >& weightLast) const;
 };
 
 /** 
@@ -59,6 +67,8 @@ class EuclideanDistance: public HistogramDistance<Numeric>{
 	virtual ~EuclideanDistance() { }
 	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& last) const;
 	virtual double distance(const std::vector< std::vector<Numeric> >& first, const std::vector< std::vector<Numeric> >& last) const;
+	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& weightFirst,
+				const std::vector<Numeric>& last, const std::vector<Numeric>& weightLast) const;
 };
 
 /** 
@@ -73,6 +83,8 @@ class Chi2Distance: public HistogramDistance<Numeric>{
 	/** Default destructor. */
 	virtual ~Chi2Distance() { }
 	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& last) const;
+	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& weightFirst,
+				const std::vector<Numeric>& last, const std::vector<Numeric>& weightLast) const;
 };
 
 /** 
@@ -88,6 +100,8 @@ class SymmetricChi2Distance: public HistogramDistance<Numeric>{
 	/** Default destructor. */
 	virtual ~SymmetricChi2Distance() { }
 	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& last) const;
+	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& weightFirst,
+				const std::vector<Numeric>& last, const std::vector<Numeric>& weightLast) const;
 };
 
 /** 
@@ -103,6 +117,8 @@ class BatthacharyyaDistance: public HistogramDistance<Numeric>{
 	virtual ~BatthacharyyaDistance() { }
 	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& last) const;
 	virtual double distance(const std::vector< std::vector<Numeric> >& first, const std::vector< std::vector<Numeric> >& last) const;
+	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& weightFirst,
+				const std::vector<Numeric>& last, const std::vector<Numeric>& weightLast) const;
 };
 
 /** 
@@ -117,6 +133,8 @@ class KullbackLeiblerDistance: public HistogramDistance<Numeric>{
 	/** Default destructor. */
 	virtual ~KullbackLeiblerDistance() { }
 	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& last) const;
+	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& weightFirst,
+				const std::vector<Numeric>& last, const std::vector<Numeric>& weightLast) const;
 };
 
 /** 
@@ -132,7 +150,10 @@ class JensenShannonDistance: public HistogramDistance<Numeric>{
 	/** Default destructor. */
 	virtual ~JensenShannonDistance() { }
 	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& last) const;
+	virtual double distance(const std::vector<Numeric>& first, const std::vector<Numeric>& weightFirst,
+				const std::vector<Numeric>& last, const std::vector<Numeric>& weightLast) const;
 };
+static EuclideanDistance<double> standardEuclideanDistance;
 
 #include <utils/HistogramDistances.hpp>
 
