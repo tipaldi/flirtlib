@@ -34,9 +34,6 @@
 #include <string>
 #include <vector>
 
-/** \def MAX_LINE_SIZE The maximum length of a line. */
-#define MAX_LINE_SIZE 8192
-
 /** 
  * Representation of a CARMEN log reader. It implements the LogReader class for the CARMEN log file format.
  *
@@ -49,9 +46,10 @@ class CarmenLogReader: public LogReader{
 	virtual ~CarmenLogReader() { }
 	/** Read a log from an inputstream. */
 	virtual void readLog(std::istream& _stream, std::vector<AbstractReading*>& _log) const;
-    protected:
 	/** Read a single line from the stream. */
-	AbstractReading* readLine(std::istream& _stream) const;
+	virtual AbstractReading* readLine(std::istream& _stream) const;
+
+    protected:
 	/** Parse the old laser structure (FLASER). */
 	LaserReading* parseFLaser(std::istream& _stream) const;
 	/** Parse the new laser structure (ROBOTLASERX). */
@@ -73,9 +71,10 @@ class CarmenLogWriter: public LogWriter{
 	virtual ~CarmenLogWriter() { }
 	/** Write a log to an outputstream */
 	virtual void writeLog(std::ostream& _stream, const std::vector<AbstractReading*>& _log) const;
-    protected:
 	/** Write a single line to the stream. */
-	void writeLine(std::ostream& _stream, const AbstractReading* _reading) const;
+	virtual void writeLine(std::ostream& _stream, const AbstractReading* _reading) const;
+
+    protected:
 	/** Write the old laser structure (FLASER). */
 	void writeFLaser(std::ostream& _stream, const LaserReading* _reading) const;
 	/** Write the new laser structure (ROBOTLASERX). */

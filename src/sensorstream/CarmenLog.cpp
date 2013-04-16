@@ -3,6 +3,9 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <math.h>
 
+/** \def MAX_LINE_SIZE The maximum length of a line. */
+#define MAX_LINE_SIZE 8192
+
 void CarmenLogReader::readLog(std::istream& _stream, std::vector<AbstractReading*>& _log) const{
     char buffer[MAX_LINE_SIZE];
 
