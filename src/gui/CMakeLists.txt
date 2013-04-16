@@ -31,7 +31,7 @@ SET(gui_LIBS
     geometry 
     ${QT_LIBRARIES}
     ${OPENGL_LIBRARIES}
-    ${Qwt5-Qt4_LIBRARY}
+    ${QWT_LIBRARIES}
     utils
 )
 
