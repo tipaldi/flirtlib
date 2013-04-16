@@ -37,6 +37,7 @@ class SensorStreamWidget: public QFrame{
     public:
 	SensorStreamWidget(QWidget * _parent = 0);
 	virtual ~SensorStreamWidget();
+	inline int getPosition() const {return m_position;}
     
     signals:
 	void newReading();
