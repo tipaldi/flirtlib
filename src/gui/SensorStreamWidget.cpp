@@ -22,8 +22,7 @@ SensorStreamWidget::~SensorStreamWidget(){
 	delete m_sensorBox;
 }
     
-void SensorStreamWidget::seekPosition(int position){
-	unsigned int _position(position);
+void SensorStreamWidget::seekPosition(int _position){
     if(_position == m_position){
 		return;
     }
@@ -46,9 +45,11 @@ void SensorStreamWidget::nextPosition(){
 void SensorStreamWidget::seekable(bool _seek, unsigned int _size){
     m_isSeekable = _seek;
     m_sensorSlider->setEnabled(_seek);
-    m_sensorSlider->setMaximum(_size);
     m_sensorBox->setEnabled(_seek);
+    if(_size) {
+	m_sensorSlider->setMaximum(_size);
     m_sensorBox->setMaximum(_size);
+	}
 }
 
 void SensorStreamWidget::streamReady(){
