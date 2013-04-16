@@ -1,7 +1,7 @@
 #include "gui/TabbedParameterWidget.h"
 
 TabbedParameterWidget::TabbedParameterWidget(const QString &name, QTabWidget *parent, int position):
-    ParameterWidget(name, 0),
+    ParameterWidget(name, parent),
     m_tabWidget(parent),
     m_tabPosition(position)
 {
@@ -13,7 +13,7 @@ void TabbedParameterWidget::activate()
 {
     ParameterWidget::activate(); 
     if(m_tabWidget){
-	m_tabWidget->insertTab(m_tabPosition, this, m_name);
+	int position = m_tabWidget->insertTab(m_tabPosition, this, m_name);
 // 	m_tabWidget->setCurrentIndex(position);
     }
 }
