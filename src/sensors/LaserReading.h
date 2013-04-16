@@ -78,8 +78,20 @@ class LaserReading: public AbstractReading {
 	 */
 	inline const std::vector<Point2D>& getWorldCartesian() const
 	    {return m_worldCartesian;}
-	/** Get remission values. It returns the remission values of the reading, if present. */
-	inline const std::vector<double>& getRemission() const
+	/** 
+	 * Get local Cartesian coordinates. It returns the points measured by the laser in Cartesian coordinates.
+	 * The points are considered in the sensor reference frame and max range readings are omitted. 
+	 */
+	inline const std::vector<Point2D>& getCartesianNoMax() const
+	    {return m_cartesianNoMax;}
+	/** 
+	 * Get global Cartesian coordinates. It returns the points measured by the laser in Cartesian coordinates.
+	 * The points are transormed in the world reference frame by using #m_laserPose and max range readings are omitted. 
+	 */
+	inline const std::vector<Point2D>& getWorldCartesianNoMax() const
+	    {return m_worldCartesianNoMax;}
+	/// Get reminiscence values 
+	/** Get remission values. It returns the remission values of the reading, if present. */	inline const std::vector<double>& getRemission() const
 	    {return m_remission;}
 	/** Get maximum range. It returns the maximum range of the sensor. */
 	inline double getMaxRange() const 
@@ -88,6 +100,9 @@ class LaserReading: public AbstractReading {
 	inline const OrientedPoint2D& getLaserPose() const 
 	    {return m_laserPose;}
 	
+	/** Get robot pose. It returns the pose of the robot in the world. */
+	inline const OrientedPoint2D& getRobotPose() const 
+	    {return m_robotPose;}
 
 	// Setter Methods
 	/** 
@@ -100,6 +115,14 @@ class LaserReading: public AbstractReading {
 	    {m_maxRange = _max; computeWorldCartesian(); computeLocalCartesian();}
 	/** Set laser pose. It sets the pose of the laser in the world. */
 	void setLaserPose(const OrientedPoint2D& _pose); 
+	/** Set robot pose. It sets the pose of the robot in the world. */
+	void setRobotPose(const OrientedPoint2D& _pose); 
+	/// Set phi values (polar coordinates)
+	inline void setPhi(const std::vector<double>& phi)
+	    {m_phi = phi; computeWorldCartesian(); computeLocalCartesian();}
+	/// Set rho values (polar coordinates)
+	inline void setRho(const std::vector<double>& rho)
+	    {m_rho = rho; computeWorldCartesian(); computeLocalCartesian();}
 
     protected:
 	/** Compute world points. It transforms the polar reading into a cartesian one, considering the pose of the laser. */
@@ -113,6 +136,8 @@ class LaserReading: public AbstractReading {
 	double m_maxRange;
 	/** The pose of the laser. */
 	OrientedPoint2D m_laserPose;
+	/** The pose of the robot. */
+	OrientedPoint2D m_robotPose;
 	/** The angles of the reading. */
 	std::vector<double> m_phi;
 	/** The distances measured. */
@@ -121,6 +146,10 @@ class LaserReading: public AbstractReading {
 	std::vector<Point2D> m_worldCartesian;
 	/** The points in the sensor reference frame. */
 	std::vector<Point2D> m_cartesian;
+	/** The points in the world reference frame, without max range readings. */
+	std::vector<Point2D> m_worldCartesianNoMax;
+	/** The points in the sensor reference frame, without max range readings. */
+	std::vector<Point2D> m_cartesianNoMax;
 	/** The reminiscence measured. */
 	std::vector<double> m_remission;
 };
