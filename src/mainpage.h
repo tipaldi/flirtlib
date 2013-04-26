@@ -1,3 +1,23 @@
+/* *
+ * FLIRTLib - Fast Laser Interesting Region Transform Library
+ * Copyright (C) 2009-2010 Gian Diego Tipaldi and Kai O. Arras
+ *
+ * This file is part of FLIRTLib.
+ *
+ * FLIRTLib is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * FLIRTLib is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with FLIRTLib.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #warning Inclusion of a documentation only header...
 /**
  * \mainpage FLIRTLib - Fast Laser Interest Region Transform Library
@@ -21,7 +41,7 @@
  * \li \e Beta-Grid. It implements a linear-polar occupancy grid. It extends the Shape Context with the notion of free space.
  *
  * \section down Download
- * The source code can be download from  http://srl.informatik.uni-freiburg.de/~tipaldi/assets/files/FLIRTLib.tgz .
+ * The source code can be download from  http://www.informatik.uni-freiburg.de/~tipaldi/assets/files/FLIRTLib.tgz .
  *
  * The archive has the following structure:
  * \li \c src/ : the source files
@@ -31,7 +51,7 @@
  * The \c src/ directory has the following structure:
  * \li \c %mainpage.h : dummy header file for generating the documentation.
  * \li \c INSTALL : installation notes.
- * \li \c LICENSE : the software license. See \ref license for further details.
+ * \li \c COPYING and COPYING.LESSER : the software license. See \ref license for further details.
  * \li \c CMakeLists.txt : the cmake configuration script.
  * \li \c build_tools/ : the directory containing the cmake modules.
  * \li \c feature/ : the directory with the main features code.
@@ -40,6 +60,7 @@
  * \li \c sensors/ : the directory with the code for the sensors abstraction.
  * \li \c sensorstream/ : the directory with the code for the sensor streams abstraction.
  * \li \c utils/ : the directory with the code for utility function such as convolution, regression, pose estimation and histogram distances.
+ * \li \c applications/ : the directory with the code for generating the binaries to test the library.
  *
  * \section inst Install
  * Download the library according to \ref down. The library relies on cmake to generate the Makefiles.
@@ -71,9 +92,10 @@
  * \subsection api Using the library
  * The library is compiled as a collection of shared objects and are available in \verbatim <lib_root>/lib/ \endverbatim (32-bit) or \verbatim <lib_root>/lib64/ \endverbatim (64-bit). 
  * The header files are located in the respective directory in the src tree. See the class list on the doxygen documentation for a more detailed API reference. 
- * \htmlonly A pdf version of the reference manual is available <a href="http://srl.informatik.uni-freiburg.de/~tipaldi/assets/files/FLIRTLib.pdf"> here. </a> \endhtmlonly
+ * \htmlonly A pdf version of the reference manual is available <a href="http://www.informatik.uni-freiburg.de/~tipaldi/assets/files/FLIRTLib.pdf"> here. </a> \endhtmlonly
  *
  * \section references References
+ * \li Gian Diego Tipaldi, Manuel Braun, Kai O. Arras. FLIRT: Interest Regions for 2D Range Data with Applications to Robot Navigation. In Proceedings of the International Symposium on Experimental Robotics (ISER). 2010
  * \li Gian Diego Tipaldi, Kai O. Arras. FLIRT -- Interest Regions for 2D Range Data. In Proceedings of the IEEE International Conference on Robotics and Automation (ICRA). 2010.
  * \li T. Lindeberg, Scale Space Theory in Computer Vision. Norwell, MA, USA: Kluwer Academic Publishers, 1994.
  * \li R. Unnikrishnan and M. Hebert, “Multi-scale interest regions from unorganized point clouds,” in Workshop on Search in 3D, IEEE Conference on Computer Vision and Pattern Recognition, 2008.
@@ -81,16 +103,24 @@
  *
  * \section license License
  * 
- * FLIRTLib Copyright (c) 2010 Gian Diego Tipaldi and Kai O. Arras
+ * FLIRTLib - Fast Laser Interesting Region Transform Library
+ * Copyright (C) 2009-2010 Gian Diego Tipaldi and Kai O. Arras
  *
- * This software is licensed under the "Creative Commons License (Attribution-NonCommercial-ShareAlike 3.0)" 
- * and is copyrighted by Gian Diego Tipaldi and Kai O. Arras
- * 
- * \latexonly Further information on this license can be found at: http://creativecommons.org/licenses/by-nc-sa/3.0/ \endlatexonly
- * \htmlonly <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported License</a>.\endhtmlonly 
- * 
- * FLIRTLib is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
- * FITNESS FOR A PARTICULAR PURPOSE.  
+ * This file is part of FLIRTLib.
+ *
+ * FLIRTLib is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * FLIRTLib is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with FLIRTLib.  If not, see \htmlonly <a rel="license" href="http://www.gnu.org/licenses/"> \endhtmlonly http://www.gnu.org/licenses/ \htmlonly </a> \endhtmlonly .
+ *
  * 
  */
 

@@ -1,3 +1,24 @@
+//
+//
+// FLIRTLib - Fast Laser Interesting Region Transform Library
+// Copyright (C) 2009-2010 Gian Diego Tipaldi and Kai O. Arras
+//
+// This file is part of FLIRTLib.
+//
+// FLIRTLib is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FLIRTLib is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with FLIRTLib.  If not, see <http://www.gnu.org/licenses/>.
+//
+
 #include <feature/Detector.h>
 #include <feature/ShapeContext.h>
 #include <feature/BetaGrid.h>
@@ -13,13 +34,18 @@
 #include <utils/SimpleMinMaxPeakFinder.h>
 #include <utils/HistogramDistances.h>
 
+#include <cairo.h>
+#include <cairo-pdf.h>
+#include <cairo-svg.h>
+
 #include <iostream>
 #include <string>
 #include <string.h>
 #include <sstream>
 #include <utility>
+#include <sys/stat.h>
+#include <sys/types.h>
 
-#include <sys/time.h>
 
 LogSensorStream m_sensorReference(NULL,NULL);
 
@@ -35,28 +61,27 @@ DescriptorGenerator *m_descriptor = NULL;
 
 RansacFeatureSetMatcher *m_ransac = NULL;
 
-double angErrorTh = 0.2;
-double linErrorTh = 0.5;
-
 std::vector< std::vector<InterestPoint *> > m_pointsReference;
 std::vector< OrientedPoint2D > m_posesReference;
 
-unsigned int corresp[] = {0, 3, 5, 7, 9, 11, 13, 15};
+cairo_t * cairoMap = 0;
+cairo_t * cairoOut = 0;
 
-double m_error[8] = {0.}, m_errorC[8] = {0.}, m_errorR[8] = {0.};
-unsigned int m_match[8] = {0}, m_matchC[8] = {0}, m_matchR[8] = {0};
-unsigned int m_valid[8] = {0};
+int offsetX = 0, offsetY = 0, border = 10;
+double scaleFactor = 1.;
+int sizeX = 1024, sizeY = 800;
 
-struct timeval detectTime, describeTime, ransacTime;
+unsigned int corresp = 9;
 
-unsigned int m_localSkip = 1;
+double acceptanceSigma = 0.1;
 
 void help(){
 	std::cerr << "FLIRTLib version 0.9b - authors Gian Diego Tipaldi and Kai O. Arras" << std::endl
-			  << "Usage: ransacLoopClosureTest -filename <logfile> [options] " << std::endl
+			  << "Usage: ransacLoopClosureDraw -filename <logfile> [options] " << std::endl
 			  << "Options:" << std::endl
 
 			  << " -filename          \t The logfile in CARMEN format to process (mandatory)." << std::endl
+			  << " -corresp           \t The number of minimum correspondences to assess a match (default=9)." << std::endl
 			  << " -scale             \t The number of scales to consider (default=5)." << std::endl
 			  << " -dmst              \t The number of spanning tree for the curvature detector (deafult=2)." << std::endl
 			  << " -window            \t The size of the local window for estimating the normal signal (default=3)." << std::endl
@@ -87,19 +112,26 @@ void help(){
 			  << "                    \t     0 - Nearest Neighbour. Only the closest match above the threshold is considered;" << std::endl
 			  << "                    \t     1 - Threshold. All the matches above the threshold are considered." << std::endl
 			  << std::endl
-			  << "The program computes matches every scan with all the others in the logfile. To work properly, the logfile must"  << std::endl
+			  << "The program matches every scan with all the others in the logfile. To work properly, the logfile must"  << std::endl
 			  << "be corrected by a SLAM algorithm beforehand (the provided logfiles are already corrected). The program writes" << std::endl
-			  << "the following matching statistics in the following files:" << std::endl
-			  << "    correct matches: <logfile>_<detector>_<descriptor>_<distance>_match.dat" << std::endl
-			  << "    matching error : <logfile>_<detector>_<descriptor>_<distance>_error.dat" << std::endl
-			  << "    matching time  : <logfile>_<detector>_<descriptor>_<distance>_time.dat" << std::endl
+			  << "one image for each scan in the following directory:" << std::endl
+			  << "    <logfile>_<detector>_<descriptor>_<distance>/" << std::endl
 			  << std::endl
 			  << std::endl;
 }
 
 void match(unsigned int position)
 {
+//     cairo_set_line_cap(cairoOut, CAIRO_LINE_CAP_ROUND);
+    
     m_sensorReference.seek(position);
+    cairo_matrix_t m1;
+    cairo_get_matrix(cairoOut, &m1);
+    cairo_identity_matrix(cairoOut);
+    cairo_set_source_surface(cairoOut, cairo_get_target(cairoMap), 0., 0.);
+    cairo_paint(cairoOut);
+    cairo_set_matrix(cairoOut, &m1);
+//     cairo_set_line_width(cairoOut, 1./(2.*scaleFactor));
     
     std::vector<InterestPoint *> pointsLocal(m_pointsReference[position].size());
     const LaserReading* lreadReference = dynamic_cast<const LaserReading*>(m_sensorReference.current());
@@ -108,74 +140,43 @@ void match(unsigned int position)
 	point->setPosition(lreadReference->getLaserPose().ominus(point->getPosition()));
 	pointsLocal[j] = point;
     }
-       
-    unsigned int inliers[m_pointsReference.size()];
-    double results[m_pointsReference.size()];
-    double linearErrors[m_pointsReference.size()];
-    double angularErrors[m_pointsReference.size()];
-    struct timeval start, end, diff, sum;
+    
+    
     for(unsigned int i = 0; i < m_pointsReference.size(); i++){
-	if(fabs(double(i) - double(position)) < m_localSkip) {
-	    results[i] = 1e17;
-	    inliers[i] = 0;
-	    linearErrors[i] = 1e17;
-	    angularErrors[i] = 1e17;
+	if(i == position) {
 	    continue;
 	}
 	OrientedPoint2D transform;
 	std::vector< std::pair<InterestPoint*, InterestPoint* > > correspondences;
-	gettimeofday(&start,NULL);
-// 	std::cout << m_pointsReference[i].size() << " vs. " << pointsLocal.size() << std::endl;
-	results[i] = m_ransac->matchSets(m_pointsReference[i], pointsLocal, transform, correspondences);
-	gettimeofday(&end,NULL);
-	timersub(&end, &start, &diff);
-	timeradd(&ransacTime, &diff, &sum);
-	ransacTime = sum;
-	inliers[i] = correspondences.size();
-	OrientedPoint2D delta = m_posesReference[position] - transform; 
-	linearErrors[i] = correspondences.size() ? delta * delta : 1e17;
-	angularErrors[i] = correspondences.size() ? delta.theta * delta.theta : 1e17;
+	double result = m_ransac->matchSets(m_pointsReference[i], pointsLocal, transform, correspondences);
+	if(correspondences.size() >= corresp) {
+	    cairo_matrix_t m;
+	    cairo_get_matrix(cairoOut, &m);
+	    cairo_translate(cairoOut, transform.x, transform.y);
+	    cairo_rotate(cairoOut, transform.theta);
+	    
+	    cairo_set_source_rgba(cairoOut, 1., 0., 0., 1. - result/(acceptanceSigma * acceptanceSigma * 5.99 * double(pointsLocal.size())));
+	    cairo_move_to(cairoOut, 0., -0.3);
+	    cairo_line_to(cairoOut, 0.6, 0.);
+	    cairo_line_to(cairoOut, 0., 0.3);
+	    cairo_close_path(cairoOut);
+	    cairo_fill(cairoOut);
+	    cairo_set_matrix(cairoOut, &m);
+	}
     }
     
-    for(unsigned int c = 0; c < 8; c++){
-	unsigned int maxCorres = 0;
-	double maxResult = 1e17;
-	double linError = 1e17, angError = 1e17;
-	double linErrorC = 1e17, angErrorC = 1e17;
-	double linErrorR = 1e17, angErrorR = 1e17;
-	bool valid = false;
-        for(unsigned int i = 0; i < m_pointsReference.size(); i++){
-	    if(linError + angError > linearErrors[i] + angularErrors[i]) {
-		linError = linearErrors[i];
-		angError = angularErrors[i];
-	    }
-	    if(maxCorres < inliers[i]){
-		linErrorC = linearErrors[i];
-		angErrorC = angularErrors[i];
-		maxCorres = inliers[i];
-	    }
-	    if(maxResult > results[i]){
-		linErrorR = linearErrors[i];
-		angErrorR = angularErrors[i];
-		maxResult = results[i];
-	    }
-	    valid = valid || inliers[i] >= corresp[c];
-	}
-	
-	
-	if(valid){
-	    m_match[c] += (linError <= (linErrorTh * linErrorTh) && angError <= (angErrorTh * angErrorTh) );
-	    m_matchC[c] += (linErrorC <= (linErrorTh * linErrorTh) && angErrorC <= (angErrorTh * angErrorTh) );
-	    m_matchR[c] += (linErrorR <= (linErrorTh * linErrorTh) && angErrorR <= (angErrorTh * angErrorTh) );
-	    
-	    m_error[c] += sqrt(linError + angError);
-	    m_errorC[c] += sqrt(linErrorC + angErrorC);
-	    m_errorR[c] += sqrt(linErrorR + angErrorR);
-	    
-	    m_valid[c]++;
-	}
-    }
-
+    cairo_matrix_t m;
+    cairo_get_matrix(cairoOut, &m);
+    cairo_translate(cairoOut, lreadReference->getLaserPose().x, lreadReference->getLaserPose().y);
+    cairo_rotate(cairoOut, lreadReference->getLaserPose().theta);
+    cairo_set_source_rgba(cairoOut, 0., 0., 1., 1.);
+    cairo_move_to(cairoOut, 0., -0.3);
+    cairo_line_to(cairoOut, 0.6, 0.);
+    cairo_line_to(cairoOut, 0., 0.3);
+    cairo_close_path(cairoOut);
+    cairo_stroke(cairoOut);
+    cairo_set_matrix(cairoOut, &m);
+//     cairo_show_page(cairoOut);
 }
 
 void detectLog(){
@@ -189,8 +190,6 @@ void detectLog(){
     bar[0] = '#';
     unsigned int progress = 0;
     
-    struct timeval start, end;
-    gettimeofday(&start, NULL);
     while(!m_sensorReference.end()){
 	unsigned int currentProgress = (m_sensorReference.tell()*100)/last;
 	if (progress < currentProgress){
@@ -205,34 +204,8 @@ void detectLog(){
 	    i++;
 	}
     }
-    gettimeofday(&end,NULL);
-    timersub(&end,&start,&detectTime);
     m_sensorReference.seek(position);
     std::cout << " done." << std::endl;
-}
-
-void countLog(){
-    double flirtNum = 0.;
-    uint count = 0;
-    
-    std::string bar(50, ' ');
-    bar[0] = '#';
-    
-    unsigned int progress = 0;
-    for(unsigned int i = 0; i < m_pointsReference.size(); i++){
-	unsigned int currentProgress = (i*100)/(m_pointsReference.size() - 1);
-	if (progress < currentProgress){
-	    progress = currentProgress;
-	    bar[progress/2] = '#';
-	    std::cout << "\rCounting points  [" << bar << "] " << progress << "%" << std::flush;
-	}
-	if(m_pointsReference[i].size()){
-	flirtNum += m_pointsReference[i].size();
-	count++;
-	}
-    }
-    flirtNum=count?flirtNum/double(count):0.;
-    std::cout << " done.\nFound " << flirtNum << " FLIRT features per scan." << std::endl;
 }
 
 void describeLog(){
@@ -241,11 +214,9 @@ void describeLog(){
     m_sensorReference.seek(0,END);
     unsigned int last = m_sensorReference.tell();
     m_sensorReference.seek(0);
-
+    
     std::string bar(50, ' ');
     bar[0] = '#';
-    struct timeval start, end;
-    gettimeofday(&start, NULL);
     unsigned int progress = 0;
     
     while(!m_sensorReference.end()){
@@ -253,7 +224,7 @@ void describeLog(){
 	if (progress < currentProgress){
 	    progress = currentProgress;
 	    bar[progress/2] = '#';
-	    std::cout << "\rDescribing points  [" << bar << "] " << progress << "%" << std::flush;
+	    std::cout << "\rDescribing points  [" << bar << "] " << (m_sensorReference.tell()*100)/last << "%" << std::flush;
 	}
 	const LaserReading* lreadReference = dynamic_cast<const LaserReading*>(m_sensorReference.next());
 	if (lreadReference){
@@ -263,8 +234,95 @@ void describeLog(){
 	    i++;
 	}
     }
-    gettimeofday(&end,NULL);
-    timersub(&end,&start,&describeTime);
+    m_sensorReference.seek(position);
+    std::cout << " done." << std::endl;
+}
+
+void computeBoundingBox(){
+    double minX =  1e17, minY =  1e17;
+    double maxX = -1e17, maxY = -1e17;
+    unsigned int position = m_sensorReference.tell();
+    m_sensorReference.seek(0,END);
+    unsigned int last = m_sensorReference.tell();
+    m_sensorReference.seek(0);
+    
+    std::string bar(50, ' ');
+    bar[0] = '#';
+    unsigned int progress = 0;
+    
+    while(!m_sensorReference.end()){
+	unsigned int currentProgress = (m_sensorReference.tell()*100)/last;
+	if (progress < currentProgress){
+	    progress = currentProgress;
+	    bar[progress/2] = '#';
+	    std::cout << "\rComputing Bounding Box  [" << bar << "] " << (m_sensorReference.tell()*100)/last << "%" << std::flush;
+	}
+	const LaserReading* lreadReference = dynamic_cast<const LaserReading*>(m_sensorReference.next());
+	if (lreadReference){
+	    const std::vector<Point2D>& points = lreadReference->getWorldCartesian();
+	    const std::vector<double>& rho = lreadReference->getRho();
+	    for(unsigned int i = 0; i < points.size(); i++){
+		if(rho[i] >= lreadReference->getMaxRange()) continue;
+		minX = minX < points[i].x ? minX : points[i].x;
+		minY = minY < points[i].y ? minY : points[i].y;
+		maxX = maxX > points[i].x ? maxX : points[i].x;
+		maxY = maxY > points[i].y ? maxY : points[i].y;
+	    }
+	}
+    }
+    double bbX = maxX - minX, bbY = maxY - minY;
+    if(bbX < bbY) { // making it landscape
+	uint tmp = sizeX;
+	sizeX = sizeY;
+	sizeY = tmp;
+// 	bbX = maxY - minY, bbY = maxX - minX;
+    }
+    double scaleX = double(sizeX - 2*border)/bbX;
+    double scaleY = double(sizeY - 2*border)/bbY;
+    scaleFactor = scaleX > scaleY ? scaleY : scaleX;
+    offsetX = minX * scaleFactor - border, offsetY = minY * scaleFactor - border;
+    m_sensorReference.seek(position);
+    sizeX = bbX*scaleFactor + 2*border;
+    sizeY = bbY*scaleFactor + 2*border;
+    std::cout << " done." << std::endl;
+    std::cout << "Bounding Box = " << bbX << "x" << bbY << std::endl;
+}
+
+void computeMap(){
+    unsigned int position = m_sensorReference.tell();
+    m_sensorReference.seek(0,END);
+    unsigned int last = m_sensorReference.tell();
+    m_sensorReference.seek(0);
+    
+    std::string bar(50, ' ');
+    bar[0] = '#';
+    unsigned int progress = 0;
+    
+    cairo_translate(cairoMap, -offsetX, -offsetY);
+    cairo_scale(cairoMap, scaleFactor, scaleFactor);
+    cairo_set_line_cap(cairoMap, CAIRO_LINE_CAP_ROUND);
+    cairo_set_line_width(cairoMap, 1./scaleFactor);
+    while(!m_sensorReference.end()){
+		unsigned int currentProgress = (m_sensorReference.tell()*100)/last;
+		if (progress < currentProgress){
+			progress = currentProgress;
+			bar[progress/2] = '#';
+			std::cout << "\rComputing Map  [" << bar << "] " << (m_sensorReference.tell()*100)/last << "%" << std::flush;
+		}
+		const LaserReading* lreadReference = dynamic_cast<const LaserReading*>(m_sensorReference.next());
+		if (lreadReference){
+			const std::vector<Point2D>& points = lreadReference->getWorldCartesian();
+			const std::vector<double>& rho = lreadReference->getRho();
+			for(unsigned int i = 0; i < points.size(); i+=2){
+				if(rho[i] >= lreadReference->getMaxRange()) continue;
+		/*		cairo_move_to(cairoMap, points[i].x * scaleFactor - offsetX, points[i].y * scaleFactor - offsetY);
+				cairo_line_to(cairoMap, points[i].x * scaleFactor - offsetX, points[i].y * scaleFactor - offsetY);*/
+				cairo_move_to(cairoMap, points[i].x, points[i].y);
+				cairo_line_to(cairoMap, points[i].x, points[i].y);
+				cairo_stroke(cairoMap);
+			}
+		}
+    }
     m_sensorReference.seek(position);
     std::cout << " done." << std::endl;
 }
@@ -272,12 +330,12 @@ void describeLog(){
 int main(int argc, char **argv){
 
     std::string filename("");
-    unsigned int scale = 5, dmst = 2, window = 3, detectorType = 0, descriptorType = 0, distanceType = 2, strategy = 0;
-    double baseSigma = 0.2, sigmaStep = 1.4, minPeak = 0.34, minPeakDistance = 0.001, acceptanceSigma = 0.1, success = 0.95, inlier = 0.4, matchingThreshold = 0.4;
+	unsigned int scale = 5, dmst = 2, window = 3, detectorType = 0, descriptorType = 0, distanceType = 2, strategy = 0;
+    double baseSigma = 0.2, sigmaStep = 1.4, minPeak = 0.34, minPeakDistance = 0.001, success = 0.95, inlier = 0.4, matchingThreshold = 0.4;
 	bool useMaxRange = false;
-    
-    int i = 1;
-    while(i < argc){
+	
+	int i = 1;
+	while(i < argc){
 		if(strncmp("-filename", argv[i], sizeof("-filename")) == 0 ){
 			filename = argv[++i];
 			i++;
@@ -287,11 +345,11 @@ int main(int argc, char **argv){
 		} else if(strncmp("-descriptor", argv[i], sizeof("-descriptor")) == 0 ){
 			descriptorType = atoi(argv[++i]);
 			i++;
-		} else if(strncmp("-distance", argv[i], sizeof("-distance")) == 0 ){
-			distanceType = atoi(argv[++i]);
+		} else if(strncmp("-corresp", argv[i], sizeof("-corresp")) == 0 ){
+			corresp = atoi(argv[++i]);
 			i++;
-		} else if(strncmp("-strategy", argv[i], sizeof("-strategy")) == 0 ){
-			strategy = atoi(argv[++i]);
+		}  else if(strncmp("-distance", argv[i], sizeof("-distance")) == 0 ){
+			distanceType = atoi(argv[++i]);
 			i++;
 		} else if(strncmp("-baseSigma", argv[i], sizeof("-baseSigma")) == 0 ){
 			baseSigma = strtod(argv[++i], NULL);
@@ -312,7 +370,7 @@ int main(int argc, char **argv){
 			dmst = atoi(argv[++i]);
 			i++;
 		} else if(strncmp("-window", argv[i], sizeof("-window")) == 0 ){
-			window = atoi(argv[++i]);
+			scale = atoi(argv[++i]);
 			i++;
 		} else if(strncmp("-acceptanceSigma", argv[i], sizeof("-acceptanceSigma")) == 0 ){
 			acceptanceSigma = strtod(argv[++i], NULL);
@@ -326,12 +384,6 @@ int main(int argc, char **argv){
 		} else if(strncmp("-matchingThreshold", argv[i], sizeof("-matchingThreshold")) == 0 ){
 			matchingThreshold = strtod(argv[++i], NULL);
 			i++;
-		} else if(strncmp("-localSkip", argv[i], sizeof("-localSkip")) == 0 ){
-			m_localSkip = atoi(argv[++i]);
-			i++;
-		} else if(strncmp("-help", argv[i], sizeof("-localSkip")) == 0 ){
-			help();
-			exit(0);
 		} else {
 			i++;
 		}
@@ -341,7 +393,6 @@ int main(int argc, char **argv){
 		help();
 		exit(-1);
     }
-    
     
     CarmenLogWriter writer;
     CarmenLogReader reader;
@@ -436,6 +487,8 @@ int main(int argc, char **argv){
 	    exit(-1);
     }
     
+    std::cerr << "Processing file:\t" << filename << "\nDetector:\t\t" << detector << "\nDescriptor:\t\t" << descriptor << "\nDistance:\t\t" << distance << std::endl;
+    
     switch(strategy){
 	case 0:
 	    m_ransac = new RansacFeatureSetMatcher(acceptanceSigma * acceptanceSigma * 5.99, success, inlier, matchingThreshold, acceptanceSigma * acceptanceSigma * 3.84, false);
@@ -447,8 +500,6 @@ int main(int argc, char **argv){
 	    std::cerr << "Wrong strategy type" << std::endl;
 	    exit(-1);
     }
-    
-    std::cerr << "Processing file:\t" << filename << "\nDetector:\t\t" << detector << "\nDescriptor:\t\t" << descriptor << "\nDistance:\t\t" << distance << std::endl;
 
     m_sensorReference.seek(0,END);
     unsigned int end = m_sensorReference.tell();
@@ -456,20 +507,30 @@ int main(int argc, char **argv){
 
     m_pointsReference.resize(end + 1);
     m_posesReference.resize(end + 1);
+        
+    computeBoundingBox();
     
     detectLog();
-    
-    countLog();
-    
     describeLog();
     
-    std::string outfile = filename;
+    std::stringstream mapFile;
+    mapFile << filename << "_map.png";
+/*    cairo_surface_t * cairoMapSurface = cairo_pdf_surface_create(mapFile.str().c_str(), sizeX, sizeY);
+    cairo_surface_t * cairoOutSurface = cairo_pdf_surface_create(outFile.str().c_str(), sizeX, sizeY);*/
+    cairo_surface_t * cairoMapSurface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, sizeX, sizeY);
+//     cairo_surface_t * cairoMapSurface = cairo_svg_surface_create(mapFile.str().c_str(), sizeX, sizeY);
+    cairoMap = cairo_create(cairoMapSurface);
     
-    timerclear(&ransacTime);
+    std::stringstream outDir;
+    outDir << filename << "_" << detector << "_" << descriptor << "_" << distance << "/";
+    mkdir(outDir.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     
+    computeMap();
+
     std::string bar(50,' ');
     bar[0] = '#';
     unsigned int progress = 0;
+    
     
     for(unsigned int i =0; i < m_pointsReference.size(); i++){
 	unsigned int currentProgress = (i*100)/(m_pointsReference.size() - 1);
@@ -478,40 +539,28 @@ int main(int argc, char **argv){
 	    bar[progress/2] = '#';
 	    std::cout << "\rMatching  [" << bar << "] " << progress << "%" << std::flush;
 	}
-    	match(i);
+	std::stringstream outFile;
+	outFile << outDir.str() << "frame_";
+	outFile.width(4);
+	outFile.fill('0');
+	outFile << std::right << i << ".png";
+	cairo_surface_t * cairoOutSurface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, sizeX, sizeY);
+// 	cairo_surface_t * cairoOutSurface = cairo_svg_surface_create(outFile.str().c_str(), sizeX, sizeY);
+	cairoOut = cairo_create(cairoOutSurface);
+	cairo_translate(cairoOut, -offsetX, -offsetY);
+	cairo_scale(cairoOut, scaleFactor, scaleFactor);
+	cairo_set_line_width(cairoOut, 1./scaleFactor);
+	match(i);
+ 	cairo_surface_write_to_png(cairoOutSurface, outFile.str().c_str());
+	cairo_surface_destroy(cairoOutSurface);
+	cairo_destroy(cairoOut);
     }
     std::cout << " done." << std::endl;
     
-    std::stringstream matchFile;
-    std::stringstream errorFile;
-    std::stringstream timeFile;
-    matchFile << outfile << "_" << detector << "_" << descriptor << "_" << distance << "_match.dat";
-    errorFile << outfile << "_" << detector << "_" << descriptor << "_" << distance << "_error.dat";
-    timeFile << outfile << "_" << detector << "_" << descriptor << "_" << distance << "_time.dat";
+    cairo_surface_write_to_png(cairoMapSurface, mapFile.str().c_str());
     
-    std::ofstream matchOut(matchFile.str().c_str());
-    std::ofstream errorOut(errorFile.str().c_str());
-    std::ofstream timeOut(timeFile.str().c_str());
-	
-	matchOut << "# Number of matches according to various strategies" << std::endl;
-    matchOut << "# The valid matches are the one with at least n correspondences in the inlier set " << std::endl;
-    matchOut << "# where n = {0, 3, 5, 7, 9, 11, 13, 15}, one for each line " << std::endl;
-    matchOut << "# optimal \t correspondence \t residual \v valid" << std::endl;
-    
-	errorOut << "# Mean error according to various strategies" << std::endl;
-	errorOut << "# The valid matches are the one with at least n correspondences in the inlier set " << std::endl;
-    errorOut << "# where n = {0, 3, 5, 7, 9, 11, 13, 15}, one for each line " << std::endl;
-    errorOut << "# optimal \t correspondence \t residual \v valid" << std::endl;
-	
-	timeOut << "# Total time spent for the various steps" << std::endl;
-	timeOut << "# detection \t description \t RANSAC" << std::endl;
-
-    for(unsigned int c = 0; c < 8; c++){
-      matchOut << m_match[c] << "\t" << m_matchC[c] << "\t" << m_matchR[c] << "\t" << m_valid[c] << std::endl;
-      errorOut << m_error[c]/m_valid[c] << "\t" << m_errorC[c]/m_valid[c] << "\t" << m_errorR[c]/m_valid[c] << "\t" << m_valid[c] << std::endl;
-    }
-    timeOut << double(detectTime.tv_sec) + 1e-06 * double(detectTime.tv_usec) << "\t"
-	    << double(describeTime.tv_sec) + 1e-06 * double(describeTime.tv_usec) << "\t"
-	    << double(ransacTime.tv_sec) + 1e-06 * double(ransacTime.tv_usec) << std::endl;
+    cairo_surface_destroy(cairoMapSurface);
+    cairo_destroy(cairoMap);
+//     cairo_show_page(cairoOut);
 }
 
