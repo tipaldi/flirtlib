@@ -1,25 +1,3 @@
-/*****************************************************************
- *
- * This file is part of the FLIRTLib project
- *
- * FLIRTLib Copyright (c) 2010 Gian Diego Tipaldi and Kai O. Arras 
- *
- * This software is licensed under the "Creative Commons 
- * License (Attribution-NonCommercial-ShareAlike 3.0)" 
- * and is copyrighted by Gian Diego Tipaldi and Kai O. Arras 
- * 
- * Further information on this license can be found at:
- * http://creativecommons.org/licenses/by-nc-sa/3.0/
- * 
- * FLIRTLib is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied 
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE.  
- *
- *****************************************************************/
-
-
-
 #ifndef MULTISCALEDETECTOR_H_
 #define MULTISCALEDETECTOR_H_
 
@@ -33,7 +11,6 @@
 #define MIN_KERNEL_SIZE 3
 #define MAX_KERNEL_SIZE 50
 
-
 /** 
  * The smoothing kernel used in the detector.
  *
@@ -42,7 +19,6 @@ enum SmoothingFilterFamily {
     GAUSSIAN, /**< The Gaussian smoothing kernel. It is the optimal kernel in the continuous case. */
     BESSEL /**< The Bessel smoothing kernel. It is the optimal kernel in the discrete case. */
 };
-
 
 /**
  * Representation of an abstract multi scale detector for monodimensional signals.
@@ -169,3 +145,4 @@ class MultiScaleDetector: public Detector {
 };
 
 #endif
+

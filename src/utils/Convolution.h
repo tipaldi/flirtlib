@@ -1,25 +1,3 @@
-/*****************************************************************
- *
- * This file is part of the FLIRTLib project
- *
- * FLIRTLib Copyright (c) 2010 Gian Diego Tipaldi and Kai O. Arras 
- *
- * This software is licensed under the "Creative Commons 
- * License (Attribution-NonCommercial-ShareAlike 3.0)" 
- * and is copyrighted by Gian Diego Tipaldi and Kai O. Arras 
- * 
- * Further information on this license can be found at:
- * http://creativecommons.org/licenses/by-nc-sa/3.0/
- * 
- * FLIRTLib is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied 
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE.  
- *
- *****************************************************************/
-
-
-
 #ifndef CONVOLUTION_H_
 #define CONVOLUTION_H_
 
@@ -52,7 +30,6 @@ enum ConvolutionResult{
     SAME, /**< The convolution result has the same size of the original signal. */
     FULL /**< The convolution result has the full size. */
 };
-
 
 /** 
  * Convolve the kernel over the source, if the size of the source is bigger than the size of the kernel, the opposite otherwise. 
@@ -97,3 +74,4 @@ std::ostream& operator<<(std::ostream& out, const std::vector<Numeric>& vector);
 #include <utils/Convolution.hpp>
 
 #endif
+
