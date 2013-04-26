@@ -1,3 +1,5 @@
 bin
 lib*
 build
+*.kate-swp
+external/gefp
