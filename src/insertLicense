@@ -1,0 +1,10 @@
+#!/bin/bash
+
+CH='/usr/local/bin/copyright-header'
+
+SW='FLIRTLib'
+DESC="Fast Laser Interesting Region Transform Library"
+HOLDER="Gian Diego Tipaldi and Kai O. Arras"
+YEAR="2009-2010"
+
+$CH --copyright-software "$SW" --copyright-software-description "$DESC" --copyright-holder "$HOLDER" --copyright-year "$YEAR" $@

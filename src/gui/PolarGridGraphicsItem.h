@@ -1,24 +1,22 @@
-/*****************************************************************
+/* *
+ * FLIRTLib - Fast Laser Interesting Region Transform Library
+ * Copyright (C) 2009-2010 Gian Diego Tipaldi and Kai O. Arras
  *
- * This file is part of the FLIRTLib project
+ * This file is part of FLIRTLib.
  *
- * FLIRTLib Copyright (c) 2010 Gian Diego Tipaldi and Kai O. Arras 
- *
- * This software is licensed under the "Creative Commons 
- * License (Attribution-NonCommercial-ShareAlike 3.0)" 
- * and is copyrighted by Gian Diego Tipaldi and Kai O. Arras 
- * 
- * Further information on this license can be found at:
- * http://creativecommons.org/licenses/by-nc-sa/3.0/
+ * FLIRTLib is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  * 
  * FLIRTLib is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied 
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE.  
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
  *
- *****************************************************************/
-
-
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with FLIRTLib.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef POLARGRIDGRAPHICSITEM_H_
 #define POLARGRIDGRAPHICSITEM_H_
