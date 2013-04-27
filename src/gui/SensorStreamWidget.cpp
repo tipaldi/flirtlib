@@ -20,7 +20,7 @@
 //
 
 #include "SensorStreamWidget.h"
-#include "SensorStreamWidget.moc"
+
 
 SensorStreamWidget::SensorStreamWidget(QWidget * _parent):
     QFrame(_parent),
@@ -43,8 +43,7 @@ SensorStreamWidget::~SensorStreamWidget(){
 	delete m_sensorBox;
 }
     
-void SensorStreamWidget::seekPosition(int position){
-	unsigned int _position(position);
+void SensorStreamWidget::seekPosition(int _position){
     if(_position == m_position){
 		return;
     }
@@ -67,9 +66,11 @@ void SensorStreamWidget::nextPosition(){
 void SensorStreamWidget::seekable(bool _seek, unsigned int _size){
     m_isSeekable = _seek;
     m_sensorSlider->setEnabled(_seek);
-    m_sensorSlider->setMaximum(_size);
     m_sensorBox->setEnabled(_seek);
+    if(_size) {
+    m_sensorSlider->setMaximum(_size);
     m_sensorBox->setMaximum(_size);
+	}
 }
 
 void SensorStreamWidget::streamReady(){
@@ -93,3 +94,5 @@ void SensorStreamWidget::buildGui(){
     connect(m_sensorSlider, SIGNAL(valueChanged(int)), this, SLOT(seekPosition(int)));
     connect(m_sensorBox, SIGNAL(valueChanged(int)), this, SLOT(seekPosition(int)));
 }
+
+#include "SensorStreamWidget.moc"

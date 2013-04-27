@@ -103,3 +103,4 @@ class InterestPoint {
 
 #endif
 
+#endif

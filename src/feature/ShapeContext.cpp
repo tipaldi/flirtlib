@@ -21,6 +21,19 @@
 
 #include "ShapeContext.h"
 
+
+Descriptor* ShapeContext::clone() const{
+    return new ShapeContext(*this);
+}
+	
+double ShapeContext::distance(const Descriptor* descriptor) const {
+    const ShapeContext *shapeContext = dynamic_cast<const ShapeContext *>(descriptor);
+    if(!m_distanceFunction || !shapeContext){
+	return 10e16;
+    }
+    return m_distanceFunction->distance(this->getHistogram(), shapeContext->getHistogram());
+}
+
 ShapeContextGenerator::ShapeContextGenerator(double minRho, double maxRho, unsigned int binRho, unsigned int binPhi)
 {
     setEdges(minRho, maxRho, binRho, binPhi);
@@ -82,14 +95,3 @@ Descriptor* ShapeContextGenerator::describe(const OrientedPoint2D& point, const 
     return shape;
 }
 	
-Descriptor* ShapeContext::clone() const{
-    return new ShapeContext(*this);
-}
-	
-double ShapeContext::distance(const Descriptor* descriptor) const {
-    const ShapeContext *shapeContext = dynamic_cast<const ShapeContext *>(descriptor);
-    if(!m_distanceFunction || !shapeContext){
-	return 10e16;
-    }
-    return m_distanceFunction->distance(this->getHistogram(), shapeContext->getHistogram());
-}

@@ -32,6 +32,7 @@
 #include <QtCore/QHash>
 #include <QtCore/QSignalMapper>
 
+
 struct ParameterPair{
     QLabel *description;
     QWidget *parameter;
@@ -90,6 +91,7 @@ class ParameterWidget: public QWidget {
 	QHash<QString, ParameterPair> m_parameterMap;
 	QGridLayout *m_layout;
 	QSignalMapper m_mapper;
+
 
 };
 

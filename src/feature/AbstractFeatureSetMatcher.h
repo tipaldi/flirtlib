@@ -18,6 +18,8 @@
  * along with FLIRTLib.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+
 #ifndef ABSTRACTFEATURESETMATCHER_H_
 #define ABSTRACTFEATURESETMATCHER_H_
 
@@ -25,6 +27,7 @@
 #include <geometry/point.h>
 #include <vector>
 #include <utility>
+
 
 /**
  * Representation of an abstract algorithm for feature matching.
@@ -105,4 +108,3 @@ class AbstractFeatureSetMatcher {
 };
 
 #endif
-

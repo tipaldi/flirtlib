@@ -88,14 +88,20 @@ void MultiScaleDetectorPlotWidget::initCurves(){
 			 Qt::darkRed, Qt::darkGreen, Qt::darkBlue, Qt::darkCyan, Qt::darkYellow, Qt::darkMagenta};
     for(unsigned int i = 0; i < m_scales; i ++){
 	m_colors[i] = colors[i%12];
+#if QWT_VERSION < 0x060000 
 	QwtSymbol symbol(QwtSymbol::Ellipse, QBrush(), QPen(m_colors[i]),QSize(10,10));
+#endif
 	m_smoothCurve[i] = new QwtPlotCurve();
 	m_smoothCurve[i]->setStyle(QwtPlotCurve::Lines);
 	m_smoothCurve[i]->setPen(QPen(m_colors[i]));
 	m_smoothCurve[i]->attach(m_smooth);
 	m_smoothMarker[i] = new QwtPlotCurve();
 	m_smoothMarker[i]->setStyle(QwtPlotCurve::NoCurve);
+#if QWT_VERSION < 0x060000 
 	m_smoothMarker[i]->setSymbol(symbol);
+#else
+	m_smoothMarker[i]->setSymbol(new QwtSymbol(QwtSymbol::Ellipse, QBrush(), QPen(m_colors[i]),QSize(10,10)));
+#endif
 	m_smoothMarker[i]->attach(m_smooth);
 	m_diffCurve[i] = new QwtPlotCurve();
 	m_diffCurve[i]->setStyle(QwtPlotCurve::Lines);
@@ -103,7 +109,11 @@ void MultiScaleDetectorPlotWidget::initCurves(){
 	m_diffCurve[i]->attach(m_derivative);
 	m_diffMarker[i] = new QwtPlotCurve();
 	m_diffMarker[i]->setStyle(QwtPlotCurve::NoCurve);
+#if QWT_VERSION < 0x060000 
 	m_diffMarker[i]->setSymbol(symbol);
+#else
+	m_diffMarker[i]->setSymbol(new QwtSymbol(QwtSymbol::Ellipse, QBrush(), QPen(m_colors[i]),QSize(10,10)));
+#endif
 	m_diffMarker[i]->attach(m_derivative);
    }
 }
@@ -142,7 +152,12 @@ void MultiScaleDetectorPlotWidget::setDifferentialMarker(QVector< QVector<double
 
 void MultiScaleDetectorPlotWidget::setData(QVector<QwtPlotCurve *>& _curve, QVector<double>& _dataX, QVector<double>& _dataY, unsigned int _scale){
     if(_scale < m_scales){
+#if QWT_VERSION < 0x060000 
 	_curve[_scale]->setData(_dataX, _dataY);
+#else
+    	QwtPointArrayData *data = new QwtPointArrayData(_dataX,_dataY);
+	_curve[_scale]->setData(data);
+#endif
     }
 }
 

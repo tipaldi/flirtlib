@@ -31,6 +31,7 @@
  * @author Gian Diego Tipaldi
  */
 
+
 class Detector {
     public:
 		/** Default destructor. */

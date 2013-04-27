@@ -29,7 +29,7 @@ FIND_PACKAGE( Qt4 REQUIRED QUIET )
 # Is Qwt installed? Look for header files
 FIND_PATH( Qwt_INCLUDE_DIR qwt.h PATHS ${QT_INCLUDE_DIR} PATH_SUFFIXES qwt qwt5 qwt-qt4 qwt5-qt4 qwt-qt3 qwt5-qt3 include qwt/include qwt5/include qwt-qt4/include qwt5-qt4/include qwt-qt3/include qwt5-qt3/include ENV PATH)
 	
-	# Find Qwt version
+# Find Qwt version
 IF( Qwt_INCLUDE_DIR )
 	IF( QT4_FOUND )
 		FILE( READ ${Qwt_INCLUDE_DIR}/qwt_global.h QWT_GLOBAL_H )

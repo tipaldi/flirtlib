@@ -68,11 +68,17 @@ class InterestPointRenderer: public AbstractRenderer {
 	inline const std::vector<double> * getScales() const
 	    {return m_scales;}
 	
+	inline const OrientedPoint2D* getLaserPose() const
+	    {return m_laserPose;}
+	    
+	inline void setLaserPose(const OrientedPoint2D* pose)
+	    {m_laserPose = pose;}
 	virtual void render();
 	
     protected:
 	const std::vector<const OrientedPoint2D *> *m_interestPoints;
 	const std::vector<double> * m_scales;
+	const OrientedPoint2D* m_laserPose;
 	std::vector<GLUquadricObj*> m_GLUPoints;
 	std::vector<Color> m_colors;
 	float m_depth;

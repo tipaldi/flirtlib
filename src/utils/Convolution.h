@@ -51,6 +51,7 @@ enum ConvolutionResult{
     FULL /**< The convolution result has the full size. */
 };
 
+
 /** 
  * Convolve the kernel over the source, if the size of the source is bigger than the size of the kernel, the opposite otherwise. 
  * The padding is defined according to padding and can be ZERO, SPECULAR or CIRCULAR. The size of the result is defined by resultType 

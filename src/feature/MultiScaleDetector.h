@@ -31,6 +31,7 @@
 #define MIN_KERNEL_SIZE 3
 #define MAX_KERNEL_SIZE 50
 
+
 /** 
  * The smoothing kernel used in the detector.
  *
@@ -39,6 +40,7 @@ enum SmoothingFilterFamily {
     GAUSSIAN, /**< The Gaussian smoothing kernel. It is the optimal kernel in the continuous case. */
     BESSEL /**< The Bessel smoothing kernel. It is the optimal kernel in the discrete case. */
 };
+
 
 /**
  * Representation of an abstract multi scale detector for monodimensional signals.

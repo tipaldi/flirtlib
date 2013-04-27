@@ -18,6 +18,8 @@
  * along with FLIRTLib.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+
 #ifndef BETAGRID_H_
 #define BETAGRID_H_
 
@@ -35,6 +37,7 @@
  *
  * @author Gian Diego Tipaldi
  */
+
 
 class BetaGrid: public Descriptor{
     public:
@@ -96,6 +99,7 @@ class BetaGrid: public Descriptor{
 		std::vector< std::vector< double > > m_hit; /** The histogram of occupied cells. */
 		std::vector< std::vector< double > > m_miss; /** The histogram of free  cells. */
 };
+
 
 /**
  * Representation of the Beta grid descriptor generator. 
@@ -199,4 +203,3 @@ class BetaGridGenerator: public DescriptorGenerator {
 };
 
 #endif
-

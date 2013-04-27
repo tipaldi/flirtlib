@@ -40,6 +40,8 @@ typedef boost::adjacency_list < boost::vecS, boost::vecS, boost::undirectedS, Di
 typedef boost::adjacency_matrix < boost::undirectedS, DistanceVertexProperty, WeightEdgeProperty > MatrixGraph;
 typedef std::pair<unsigned int, unsigned int> GraphEdge;
 
+
+
 /**
  * Representation of the multi scale curvature detector of Unnikrishnan and Hebert.
  * The class represents the curvature based detector of Unnikrishnan and Hebert. It provides the interface to set 

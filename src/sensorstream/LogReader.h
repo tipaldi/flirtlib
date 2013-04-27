@@ -39,6 +39,9 @@ class LogReader{
 	
 	/** Read a log from an inputstream */
 	virtual void readLog(std::istream& _stream, std::vector<AbstractReading*>& _log) const = 0;
+
+	/** Read a single line from an  inputstream. */
+	virtual AbstractReading* readLine(std::istream& _stream) const = 0;
 };
 
 #endif

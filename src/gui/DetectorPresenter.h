@@ -56,6 +56,7 @@ class DetectorPresenter: public QObject{
 	inline ParameterWidget* getDetectorParameter() 
 	    {return m_detectorParameter;}
 
+
     protected:
 	virtual void syncronize() = 0;
 	virtual void reconnect() = 0;

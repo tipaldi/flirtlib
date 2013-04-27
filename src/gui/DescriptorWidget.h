@@ -27,6 +27,7 @@
 #include <QtGui/QMouseEvent>
 #include <vector>
 
+
 class DescriptorWidget: public QGraphicsView {
     Q_OBJECT
     
@@ -53,7 +54,9 @@ class DescriptorWidget: public QGraphicsView {
 	QVector<QGraphicsItem * > m_items;
 	QPointF m_position;
 
+
 };
+
 
 #endif
 

@@ -24,7 +24,8 @@
 InterestPointRenderer::InterestPointRenderer(const std::vector<const OrientedPoint2D *> *_points, 
 					     const std::vector<double> * _scales):
     m_interestPoints(_points),
-    m_scales(_scales)    
+    m_scales(_scales),
+    m_laserPose(NULL)
 { 
     if(!_points || (_scales && _points->size() != _scales->size())){
 	m_interestPoints = NULL;
@@ -104,9 +105,15 @@ void InterestPointRenderer::setInterestPoints(const std::vector<const OrientedPo
 void InterestPointRenderer::render(){
     if(!m_interestPoints) return;
     glPushMatrix();
-    glTranslatef(0.f, 0.f, m_depth);
+    glTranslated(0., 0., m_depth);
+    if(m_laserPose) {
+// 	std::cout << "Laser pose = " << *m_laserPose << std::endl;
+	glTranslated(m_laserPose->x, m_laserPose->y, 0.);
+	glRotated(rad2deg(m_laserPose->theta), 0., 0., 1.);
+    }
     for (unsigned int index = 0; index < m_interestPoints->size(); index++) {
 	glPushMatrix();
+// 	std::cout << "\t" << *(*m_interestPoints)[index] << ", transf = " << m_laserPose->oplus(*(*m_interestPoints)[index]) << std::endl;
 	glTranslated((*m_interestPoints)[index]->x, (*m_interestPoints)[index]->y, 0);
 	glRotated(rad2deg((*m_interestPoints)[index]->theta), 0., 0., 1.);
 	glColor4f(m_colors[index].red(), m_colors[index].green(), m_colors[index].blue(), m_colors[index].alpha());

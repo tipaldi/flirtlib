@@ -82,7 +82,6 @@ LaserReadingRenderer& LaserReadingRenderer::operator=(const LaserReadingRenderer
 
 void LaserReadingRenderer::setLaserPoints(const std::vector<Point2D> *_points, const std::vector<double>& normals){
     m_laserPoints = _points;
-    m_laserPose = NULL;
     
     if(!m_laserPoints) return;
     

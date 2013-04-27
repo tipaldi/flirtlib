@@ -58,6 +58,7 @@ struct OrientedPoint2D: public Point2D {
     /** Constructor. It sets the point to be in (_x, _y, _theta) */
     OrientedPoint2D(double _x, double _y, double _theta); 
     
+    virtual ~OrientedPoint2D() { }
     /** Inverse compound operator \f$ (\ominus this) \f$*/
     OrientedPoint2D ominus() const;
     
@@ -84,8 +85,8 @@ inline double deg2rad(double _angle)
 inline double rad2deg(double _angle) 
     {return _angle/M_PI*180.0;}
 
-/** Simple function for normalizing the angle into the interval \f$(base, 2\pi + base)\f$  */
-double normAngle(double angle, double base); 
+/** Simple function for normalizing the angle into the interval \f$(base, 2\pi + base)\f$  (default base = \f$ -\pi \f$)*/
+double normAngle(double angle, double base = -M_PI); 
 
 /** Compute the difference between two points */
 inline Point2D operator-(const Point2D& first, const Point2D& last)

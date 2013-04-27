@@ -24,6 +24,9 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <math.h>
 
+/** \def MAX_LINE_SIZE The maximum length of a line. */
+#define MAX_LINE_SIZE 8192
+
 void CarmenLogReader::readLog(std::istream& _stream, std::vector<AbstractReading*>& _log) const{
     char buffer[MAX_LINE_SIZE];
 
@@ -90,6 +93,7 @@ LaserReading* CarmenLogReader::parseRobotLaser(std::istream& _stream) const{
     result->setMaxRange(maxRange);
     result->setRemission(remission);
     result->setLaserPose(laserPose);
+    result->setRobotPose(robotPose);
     
     return result;
 }
@@ -161,6 +165,7 @@ LaserReading* CarmenLogReader::parseFLaser(std::istream& _stream) const{
     LaserReading *result = new LaserReading(phi, rho, timestamp, sensorName, robotName);
     result->setMaxRange(maxRange);
     result->setLaserPose(laserPose);
+    result->setRobotPose(robotPose);
     
     return result;
 }
@@ -195,10 +200,11 @@ void CarmenLogWriter::writeFLaser(std::ostream& _stream, const LaserReading* _re
     }
     
     const OrientedPoint2D &laserPose = _reading->getLaserPose();
+    const OrientedPoint2D &robotPose = _reading->getRobotPose();
     
     _stream.precision(6);
     _stream << laserPose.x << " " << laserPose.y << " " << laserPose.theta << " ";
-    _stream << laserPose.x << " " << laserPose.y << " " << laserPose.theta << " ";
+    _stream << robotPose.x << " " << robotPose.y << " " << robotPose.theta << " ";
     
     _stream << _reading->getTime() << " " << _reading->getRobot() << " " << _reading->getTime() << std::endl;
 }
@@ -228,10 +234,11 @@ void CarmenLogWriter::writeRobotLaser(std::ostream& _stream, const LaserReading*
     }
     
     const OrientedPoint2D &laserPose = _reading->getLaserPose();
+    const OrientedPoint2D &robotPose = _reading->getRobotPose();
     
     _stream.precision(6);
     _stream << laserPose.x << " " << laserPose.y << " " << laserPose.theta << " ";
-    _stream << laserPose.x << " " << laserPose.y << " " << laserPose.theta << " ";
+    _stream << robotPose.x << " " << robotPose.y << " " << robotPose.theta << " ";
     
     _stream << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 << " ";
     

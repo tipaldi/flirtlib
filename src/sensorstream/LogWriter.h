@@ -40,6 +40,9 @@ class LogWriter{
 	
 	/** Write a log to an outputstream */
 	virtual void writeLog(std::ostream& _stream, const std::vector<AbstractReading*>& _log) const = 0;
+
+	/** Write a reading to an outputstream */
+	virtual void writeLine(std::ostream& _stream, const AbstractReading* _reading) const = 0;
 };
 
 #endif

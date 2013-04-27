@@ -34,6 +34,9 @@ LaserReading::LaserReading(const vector<double>& _phi, const vector<double>& _rh
     m_laserPose.x = 0;
     m_laserPose.y = 0;
     m_laserPose.theta = 0;
+    m_robotPose.x = 0;
+    m_robotPose.y = 0;
+    m_robotPose.theta = 0;
     computeLocalCartesian();
     m_worldCartesian = m_cartesian;
 }
@@ -52,12 +55,17 @@ void LaserReading::setLaserPose(const OrientedPoint2D& _pose){
     computeWorldCartesian();
 }
 
+void LaserReading::setRobotPose(const OrientedPoint2D& _pose){
+    m_robotPose = _pose;
+}
 void LaserReading::computeWorldCartesian(){
     m_worldCartesian.resize(m_phi.size());
+    m_worldCartesianNoMax.clear();
     for(unsigned int i = 0; i < m_phi.size(); i++){
 	if(m_rho[i]<m_maxRange){
 	    m_worldCartesian[i].x = cos(m_phi[i] + m_laserPose.theta)*m_rho[i] + m_laserPose.x;
 	    m_worldCartesian[i].y = sin(m_phi[i] + m_laserPose.theta)*m_rho[i] + m_laserPose.y;
+	    m_worldCartesianNoMax.push_back(m_worldCartesian[i]);
 	} else {
 	    m_worldCartesian[i].x = cos(m_phi[i] + m_laserPose.theta)*m_maxRange + m_laserPose.x;
 	    m_worldCartesian[i].y = sin(m_phi[i] + m_laserPose.theta)*m_maxRange + m_laserPose.y;
@@ -69,13 +77,15 @@ void LaserReading::computeWorldCartesian(){
 
 void LaserReading::computeLocalCartesian(){
     m_cartesian.resize(m_phi.size());
+    m_cartesianNoMax.clear();
     for(unsigned int i = 0; i < m_phi.size(); i++){
 	if(m_rho[i]<m_maxRange){
 	    m_cartesian[i].x = cos(m_phi[i])*m_rho[i];
 	    m_cartesian[i].y = sin(m_phi[i])*m_rho[i];
+	    m_cartesianNoMax.push_back(m_cartesian[i]);
 	} else {
-	    m_cartesian[i].x = cos(m_phi[i] + m_laserPose.theta)*m_maxRange + m_laserPose.x;
-	    m_cartesian[i].y = sin(m_phi[i] + m_laserPose.theta)*m_maxRange + m_laserPose.y;
+	    m_cartesian[i].x = cos(m_phi[i])*m_maxRange;
+	    m_cartesian[i].y = sin(m_phi[i])*m_maxRange;
 	}
     }
 }

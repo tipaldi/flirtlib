@@ -64,6 +64,15 @@ LogSensorStream::~LogSensorStream(){
     }
 }
 
+AbstractReading* LogSensorStream::next(){
+    return m_log[m_index++];
+}
+
+
+AbstractReading* LogSensorStream::current(){
+    return m_log[m_index];
+}
+
 const AbstractReading* LogSensorStream::next() const{
     return m_log[m_index++];
 }

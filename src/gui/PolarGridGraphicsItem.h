@@ -26,6 +26,7 @@
 #include <QtGui/QPainterPath>
 #include <vector>
 
+
 class PolarGridGraphicsItem: public QGraphicsItem {
     public:
 	PolarGridGraphicsItem(const std::vector< std::vector<double> > *grid, const std::vector<double> *phiEdges, const std::vector<double> *rhoEdges, QGraphicsItem* parent = 0); 
@@ -79,6 +80,7 @@ class PolarGridGraphicsItem: public QGraphicsItem {
 	QColor m_color;
 	QString m_text;
 };
+
 
 #endif
 

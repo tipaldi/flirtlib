@@ -121,6 +121,7 @@ void RansacPresenter::changeAdaptive(int value){
 void RansacPresenter::syncronize(){
     RansacFeatureSetMatcher *featureSetMatcher = (RansacFeatureSetMatcher *) m_featureSetMatcher;
     m_featureSetMatcherParameter->setDoubleValue("successProbability", featureSetMatcher->getSuccessProbability());
+    m_featureSetMatcherParameter->setDoubleValue("distanceThreshold", featureSetMatcher->getDistanceThreshold());
     m_featureSetMatcherParameter->setDoubleValue("inlierProbability", featureSetMatcher->getInlierProbability());
     m_featureSetMatcherParameter->setBoolValue("adaptive", featureSetMatcher->getAdaptive());
     FeatureSetMatcherPresenter::syncronize();

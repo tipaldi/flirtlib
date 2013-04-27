@@ -36,6 +36,7 @@ class TabbedParameterWidget: public ParameterWidget {
 	QTabWidget* m_tabWidget;
 	int m_tabPosition;
 
+
 };
 
 #endif

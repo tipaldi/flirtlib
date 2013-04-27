@@ -27,6 +27,7 @@
 
 class AbstractRenderer {
     public:
+	virtual ~AbstractRenderer() { }
 	virtual void render() = 0;
 };
 

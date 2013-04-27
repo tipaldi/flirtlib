@@ -28,7 +28,7 @@ FeatureSetMatcherPresenter::FeatureSetMatcherPresenter(AbstractFeatureSetMatcher
     m_featureSetMatcher(featureSetMatcher),
     m_featureSetMatcherParameter(featureSetMatcherParameter)
 {
-    m_featureSetMatcherParameter->addDoubleParameter("acceptanceThreshold", "Threshold on the inlier distance", 0.01 * 5.99, 0., 1e17, 2, 0.01);
+    m_featureSetMatcherParameter->addDoubleParameter("acceptanceThreshold", "Threshold on the inlier distance", 0.01, 0., 1e17, 3, 0.005);
     syncronize();
     reconnect();
 }
@@ -42,7 +42,7 @@ void FeatureSetMatcherPresenter::setFeatureSetMatcherParameter(ParameterWidget* 
     disconnect(m_featureSetMatcherParameter, 0, this, 0);
     m_featureSetMatcherParameter = featureSetMatcherParameter;
     m_featureSetMatcherParameter->clearParameterMap();
-    m_featureSetMatcherParameter->addDoubleParameter("acceptanceThreshold", "Threshold on the inlier distance", 0.01 * 5.99, 0., 1e17, 2, 0.01);
+    m_featureSetMatcherParameter->addDoubleParameter("acceptanceThreshold", "Threshold on the inlier distance", 0.01, 0., 1e17, 3, 0.005);
     syncronize();
     reconnect();
 }
@@ -60,16 +60,19 @@ void FeatureSetMatcherPresenter::changeAcceptanceThreshold(double value){
     AbstractFeatureSetMatcher *featureSetMatcher = (AbstractFeatureSetMatcher *) m_featureSetMatcher;
     double guiValue; 
     m_featureSetMatcherParameter->getDoubleValue(QString("acceptanceThreshold"), guiValue);
-    if(featureSetMatcher->getAcceptanceThreshold() != value ||  guiValue != value){
-	featureSetMatcher->setAcceptanceThreshold(value);
-	m_featureSetMatcherParameter->setDoubleValue("acceptanceThreshold", featureSetMatcher->getAcceptanceThreshold());
+//     guiValue = guiValue * guiValue * 5.99;
+    double modifiedValue = value * value * 5.99;
+    if(featureSetMatcher->getAcceptanceThreshold() != modifiedValue ||  guiValue != value){
+	featureSetMatcher->setAcceptanceThreshold(modifiedValue);
+	m_featureSetMatcherParameter->setDoubleValue("acceptanceThreshold", value);
 	emit featureSetMatcherChanged();
     }
 }
 
 void FeatureSetMatcherPresenter::syncronize(){
     AbstractFeatureSetMatcher *featureSetMatcher = (AbstractFeatureSetMatcher *) m_featureSetMatcher;
-    m_featureSetMatcherParameter->setDoubleValue("acceptanceThreshold", featureSetMatcher->getAcceptanceThreshold());
+    double realValue = sqrt(featureSetMatcher->getAcceptanceThreshold() / 5.99);
+    m_featureSetMatcherParameter->setDoubleValue("acceptanceThreshold", realValue);
 }
 
 void FeatureSetMatcherPresenter::reconnect(){

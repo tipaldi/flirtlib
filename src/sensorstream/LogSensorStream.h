@@ -52,46 +52,71 @@ class LogSensorStream: public SensorStream {
 	 * @param _writer The LogWriter object for a particular log format.
 	 */
 	LogSensorStream(const LogReader* _reader, const LogWriter* _writer);
+
 	/** Copy Constructor. It copies the object of the class by cloning the readings. */
 	LogSensorStream(const LogSensorStream& _stream);
+
 	/**
 	 * Assignament operator. It assigns _stream to this object. 
 	 * The previous reading are deleted and the _stream one cloned. 
 	 */
 	LogSensorStream& operator=(const LogSensorStream& _stream);
+
 	/** Destructor */
 	virtual ~LogSensorStream();
 	
 	/** Get the next reading and advance the stream (const reading). */
 	virtual const AbstractReading* next() const;
+
 	/** Get the current reading without advancing the stream (const reading). */
 	virtual const AbstractReading* current() const;
+
+	/** Get the next reading and advance the stream (non const reading). */
+	virtual AbstractReading* next();
+
+	/** Get the current reading without advancing the stream (non const reading). */
+	virtual AbstractReading* current();
+	
+	inline virtual const AbstractReading* operator[](unsigned int n) const
+	    {return m_log[n];}
+
+	inline virtual AbstractReading* operator[](unsigned int n)
+	    {return m_log[n];}
+
 	/** Seek the stream to a given sensor position. Return false if is not possible. */
 	virtual bool seek(const unsigned int _position = 0, SensorStreamOffset _offset = BEGIN);
+
 	/** Get the current sensor position of the stream. Return 0 if it is not seekable */
 	virtual inline unsigned int tell() const {return m_index;}
+
 	/** Check if the stream is seekable */
 	virtual inline bool isSeekable() const {return true;}
+
 	/** Check if the stream is finished. */
 	virtual bool end() const;
+	
 	
 	/** Get the full log vector. */
 	inline const std::vector<AbstractReading*>& getLog() const
 	    {return m_log;}
+
 	/** Get the log reader. */
 	inline const LogReader* getReader() const
 	    {return m_logReader;}
+
 	/** Get the log writer. */
 	inline const LogWriter* getWriter() const
 	    {return m_logWriter;}
 	
 	/** Load a log from a file. */
 	void load(const std::string& _filename);
+
 	/** Save a log to a file. */
 	void save(const std::string& _filename);
     
 	/** Load a log from a stream. */
 	void load(std::istream& _stream);
+
 	/** Save a log to a stream. */
 	void save(std::ostream& _stream);
     

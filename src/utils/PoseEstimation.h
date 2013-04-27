@@ -25,8 +25,12 @@
 #include <vector>
 #include <utility>
 
+
 /** Function to compute the Euclidean transformation between two set of points. The transformation is computed in closed form minimizing the squared residual reprojection error. */
 double compute2DPose(const std::vector< std::pair<Point2D, Point2D> > &correspondences, OrientedPoint2D& transformation);
 
-#endif
+/** Function to compute the Euclidean transformation between two set of points. The transformation is computed in closed form minimizing the squared residual reprojection error. */
+inline OrientedPoint2D compute2DPose(const std::vector< std::pair<Point2D, Point2D> > &correspondences)
+    {OrientedPoint2D result; compute2DPose(correspondences, result); return result;}
 
+#endif

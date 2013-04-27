@@ -99,8 +99,9 @@ void CurvatureDetector::computeGraph(const LaserReading& reading, std::vector<Po
 			for(unsigned int j = i + 1; j < worldPoints.size(); j++){
 				if(m_useMaxRange || reading.getRho()[j] < reading.getMaxRange()){
 					Point2D difference = worldPoints[i] - worldPoints[j];
+		    double weight = hypot(difference.x, difference.y);
 					edges.push_back(GraphEdge(currentVertexNumber,targetVertexNumber));
-					weights.push_back(hypot(difference.x, difference.y));
+		    weights.push_back(weight);
 					targetVertexNumber++;
 				}
 			}
@@ -227,8 +228,8 @@ unsigned int CurvatureDetector::computeInterestPoints(const LaserReading& readin
 				if(hypot(diff2.x, diff2.y) < distance) support.push_back(worldPoints[k]);
 			}
 
-	    LineParameters param = computeNormals(support);
-	    pose.theta = normAngle(param.alpha, - M_PI);    
+// 	    LineParameters param = computeNormals(support);
+// 	    pose.theta = normAngle(param.alpha, - M_PI);    
 	    
 			InterestPoint *interest = new InterestPoint(pose, distance);
 		//  InterestPoint *interest = new InterestPoint(pose, m_scales[i]);

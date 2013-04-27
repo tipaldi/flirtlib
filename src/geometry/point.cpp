@@ -44,7 +44,7 @@ OrientedPoint2D::OrientedPoint2D():
 
 OrientedPoint2D::OrientedPoint2D(double _x, double _y, double _theta):
     Point2D(_x,_y),
-    theta(_theta)
+    theta(normAngle(_theta))
 {
     
 }
@@ -54,7 +54,7 @@ OrientedPoint2D OrientedPoint2D::ominus() const
     double ctheta = cos(theta), stheta = sin(theta);
     return OrientedPoint2D(-x * ctheta - y * stheta,
 			    x * stheta - y * ctheta,
-			    -theta);
+			    normAngle(-theta));
 }
     
 OrientedPoint2D OrientedPoint2D::ominus(const OrientedPoint2D& point) const
@@ -62,7 +62,7 @@ OrientedPoint2D OrientedPoint2D::ominus(const OrientedPoint2D& point) const
     double ctheta = cos(theta), stheta = sin(theta);
     return OrientedPoint2D( (point.x - x) * ctheta + (point.y - y) * stheta,
 			   -(point.x - x) * stheta + (point.y - y) * ctheta,
-			     point.theta - theta);
+			     normAngle(point.theta - theta));
 
 }
     
@@ -79,7 +79,7 @@ OrientedPoint2D OrientedPoint2D::oplus(const OrientedPoint2D& point) const
     double ctheta = cos(theta), stheta = sin(theta);
     return OrientedPoint2D(x + point.x * ctheta - point.y * stheta,
 			   y + point.x * stheta + point.y * ctheta,
-			   theta + point.theta);
+			   normAngle(theta + point.theta));
 }
 
 Point2D OrientedPoint2D::oplus(const Point2D& point) const

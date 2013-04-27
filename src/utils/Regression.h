@@ -31,6 +31,7 @@
  * @author Gian Diego Tipaldi
  */
 
+
 /**
  * Struct defining the parameters of a line;
  *
@@ -40,6 +41,7 @@
 struct LineParameters{
     double rho; /**< The distance of the line from the origin of the axis. */
     double alpha; /**< The angle of the normal vector of the line. */
+    double error; /**< The residual error of the fitted line. */
 };
 
 /** 
@@ -56,5 +58,12 @@ LineParameters computeNormals(const std::vector<Point2D>& points, const std::vec
 
 LineParameters computeNormals(const std::vector<Point2D>& points);
 
-#endif
+/** 
+ * Fits a line in the weighted least squares sense at the center with the points, in cartesian coordinates, 
+ * minimizing the perpendicular errors from the points to the line. 
+ */
 
+
+LineParameters computeNormals(const Point2D& center, const std::vector<Point2D>& _points);
+
+#endif
