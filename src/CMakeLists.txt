@@ -1,13 +1,4 @@
-# This is the main CMake configuration file, you should always do "cmake ." from here and not from subdirs
-
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8 FATAL_ERROR)
-
 # Some project related variables
-PROJECT(FLIRT CXX C)
-
-SET(CMAKE_VERBOSE_MAKEFILE 0)
-
-SET(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${FLIRT_SOURCE_DIR}/build_tools")
 
 if(NOT CMAKE_BUILD_TYPE)
     set (CMAKE_BUILD_TYPE RelWithDebInfo)
@@ -139,7 +130,7 @@ ELSE(CAIRO_FOUND)
         MESSAGE(STATUS "        Cairo not found, it is OPTIONAL: to draw to PDF files.")
 ENDIF(CAIRO_FOUND)
 
-INCLUDE_DIRECTORIES(${FLIRT_SOURCE_DIR})
+INCLUDE_DIRECTORIES(${FLIRT_SOURCE_DIR}/src)
 
 # ---------------------------- Setting compilation flags ------------------------------
 # Optimization
