@@ -24,9 +24,10 @@
 InterestPoint::InterestPoint(const OrientedPoint2D& _position, double _scale, const Descriptor* _descriptor):
     m_position(_position),
     m_scale(_scale),
-    m_scaleLevel(0)
+    m_scaleLevel(0),
+    m_descriptor(NULL)
 {
-    m_descriptor = _descriptor->clone();
+    if(_descriptor) m_descriptor = _descriptor->clone();
 }
 
 InterestPoint::InterestPoint(const InterestPoint& _point):
