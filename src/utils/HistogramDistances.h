@@ -71,7 +71,7 @@ class EuclideanDistance: public HistogramDistance<Numeric>{
 
 /** 
  * Representation of the \f$ \chi^2 \f$ distance function between histograms.
- * This class represents the function to compute the \f$ \Chi^2 \f$ distance between histograms.
+ * This class represents the function to compute the \f$ \chi^2 \f$ distance between histograms.
  *
  */
 
@@ -87,7 +87,7 @@ class Chi2Distance: public HistogramDistance<Numeric>{
 
 /** 
  * Representation of the symmetric \f$ \chi^2 \f$ distance function between histograms.
- * This class represents the function to compute the symmetric \f$ \Chi^2 \f$  distance between histograms.
+ * This class represents the function to compute the symmetric \f$ \chi^2 \f$  distance between histograms.
  * The result is normalized to be in the range [0,1].
  *
  */
