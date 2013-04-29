@@ -29,9 +29,9 @@ SET(feature_HDRS
     RansacFeatureSetMatcher.h
     RansacMultiFeatureSetMatcher.h
 ) 
-TARGET_LINK_LIBRARIES(feature boost_serialization-mt)
 
 ADD_LIBRARY(feature SHARED ${feature_SRCS})
+TARGET_LINK_LIBRARIES(feature boost_serialization-mt)
 
 install(TARGETS feature
     RUNTIME DESTINATION bin
