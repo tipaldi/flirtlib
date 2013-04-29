@@ -8,7 +8,7 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * FLIRTLib is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -20,6 +20,14 @@
 
 #ifndef DESCRIPTOR_H_
 #define DESCRIPTOR_H_
+
+#include <boost/serialization/base_object.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
+#include <boost/serialization/export.hpp>
 
 class InterestPoint;
 class LaserReading;
@@ -40,9 +48,45 @@ class Descriptor {
 		/** Default destructor. */
 		virtual ~Descriptor() { }
 		
-		/** Abstract interface for computing the distance between two descriptors. The implementation of the actual distance is left to the inherited classes. */
+		/** 
+		 * Abstract interface for computing the distance between two descriptors. 
+		 * The implementation of the actual distance is left to the inherited classes. 
+		 * 
+		 */
 		virtual double distance(const Descriptor* descriptor) const = 0;
+	
+		/** 
+		 * Returns the descriptor in the form of onedimensional histogram. The resulting vector represents the feature descriptor.
+		 *
+		 */
+		virtual void getFlatDescription(std::vector<double>& description) const = 0;
+	
+		/** 
+		 * Returns the descriptor in the form of a weighted onedimensional histogram. The resulting vectors represent the feature descriptor and the importance of each dimension.
+		 * @param description the descriptor vector
+		 * @param weight the descriptor variance
+		 *
+		 */
+		virtual void getWeightedFlatDescription(std::vector<double>& description, std::vector<double>& weight) const
+	    {getFlatDescription(description); weight.resize(description.size(),1.);}
+   
+    protected:
+		friend class boost::serialization::access;
+	
+		/** Serializes the class using boost::serialization. */ 
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version);
 };
+
+template<class Archive>
+void Descriptor::serialize(Archive& ar, const unsigned int version)
+{
+    BOOST_SERIALIZATION_ASSUME_ABSTRACT(Descriptor);
+}
+
+#if BOOST_VERSION > 104000
+BOOST_CLASS_EXPORT_KEY(Descriptor);
+#endif
 
 /**
  * Representation of an abstract descriptor generator.

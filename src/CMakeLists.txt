@@ -1,5 +1,3 @@
-# Some project related variables
-
 if(NOT CMAKE_BUILD_TYPE)
     set (CMAKE_BUILD_TYPE RelWithDebInfo)
 endif(NOT CMAKE_BUILD_TYPE)

@@ -55,7 +55,7 @@ double RansacMultiFeatureSetMatcher::matchSets(const std::vector<InterestPoint *
 	return 1e17;
     }
     
-    // Check if there are enough matches compared to the inlier probability (FIXME maybe is better to adjust the inlier probability)
+    // Check if there are enough matches compared to the inlier probability
     if(double(possibleCorrespondences.size()) * m_inlierProbability < 2){  
 // 	std::cout << "Not enough possible correspondences for the inlier probability" << std::endl;
 	return 1e17;

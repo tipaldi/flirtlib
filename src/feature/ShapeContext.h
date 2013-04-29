@@ -8,7 +8,7 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * FLIRTLib is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -50,6 +50,8 @@ class ShapeContext: public Descriptor{
 		 */
 		virtual double distance(const Descriptor* descriptor) const;
 	
+		virtual void getFlatDescription(std::vector<double>& description) const;
+
 		/** Returns the shape context in the form of a bidimensional histogram. The first dimension represents the angle and the second dimension the distance. */
 		inline const std::vector< std::vector< double > >& getHistogram() const
 			{return m_histogram;}
@@ -67,9 +69,24 @@ class ShapeContext: public Descriptor{
 			{m_distanceFunction = distanceFunction;}
 		
     protected:
+		friend class boost::serialization::access;
+
+		/** Serializes the class using boost::serialization. */ 	
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version);
+
 		const HistogramDistance<double> *m_distanceFunction; /**< The distance function used to compeare two shape contexts. */ 
 		std::vector< std::vector< double > > m_histogram;	/**< The histogram representing the shape context. */
 };
+
+BOOST_CLASS_EXPORT(ShapeContext);
+
+template <class Archive>
+void ShapeContext::serialize(Archive & ar, const unsigned int version)
+{
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Descriptor);
+    ar & BOOST_SERIALIZATION_NVP(m_histogram);
+}
 
 /**
  * Representation of the shape context descriptor generator. 

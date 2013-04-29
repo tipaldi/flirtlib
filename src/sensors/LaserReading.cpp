@@ -58,6 +58,7 @@ void LaserReading::setLaserPose(const OrientedPoint2D& _pose){
 void LaserReading::setRobotPose(const OrientedPoint2D& _pose){
     m_robotPose = _pose;
 }
+
 void LaserReading::computeWorldCartesian(){
     m_worldCartesian.resize(m_phi.size());
     m_worldCartesianNoMax.clear();

@@ -8,7 +8,7 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * FLIRTLib is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -45,6 +45,21 @@ class BetaGrid: public Descriptor{
 		
 		/** Default destructor. */
 		virtual ~BetaGrid() { }
+
+		/** 
+		 * Returns \f$ \beta \f$-Grid in the form of a onedimensional histogram. The resulting vector represents the feature descriptor.
+		 *
+		 */
+		virtual void getFlatDescription(std::vector<double>& description) const;
+
+		/** 
+		 * Returns \f$ \beta \f$-Grid and its variance in the form of onedimensional histograms. The resulting vectors represent the feature descriptor and the variance.
+		 * @param description the descriptor vector
+		 * @param weight the descriptor variance
+		 *
+		 */
+		virtual void getWeightedFlatDescription(std::vector<double>& description, std::vector<double>& weight) const;
+
 		/** 
 		 * Implements the distance function between two shape context descriptors. 
 		 * The actual distance is computed using the histogram distance defined in #m_distanceFunction .
@@ -93,6 +108,12 @@ class BetaGrid: public Descriptor{
 			{m_distanceFunction = distanceFunction;}
 		
 	protected:
+		friend class boost::serialization::access;
+
+		/** Serializes the class using boost::serialization. */ 
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version);
+
 		const HistogramDistance<double> *m_distanceFunction; /**< The distance function used to compeare two \f$ \beta \f$-Grids. */ 
 		std::vector< std::vector< double > > m_histogram; /**< The histogram representing the \f$ \beta \f$-Grid. */
 		std::vector< std::vector< double > > m_variance; /**< The histogram representing the variance of the \f$ \beta \f$-Grid. */
@@ -100,6 +121,17 @@ class BetaGrid: public Descriptor{
 		std::vector< std::vector< double > > m_miss; /** The histogram of free  cells. */
 };
 
+BOOST_CLASS_EXPORT(BetaGrid);
+
+template <class Archive>
+void BetaGrid::serialize(Archive & ar, const unsigned int version)
+{
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Descriptor);
+    ar & BOOST_SERIALIZATION_NVP(m_histogram);
+    ar & BOOST_SERIALIZATION_NVP(m_variance);
+    ar & BOOST_SERIALIZATION_NVP(m_hit);
+    ar & BOOST_SERIALIZATION_NVP(m_miss);
+}
 
 /**
  * Representation of the Beta grid descriptor generator. 

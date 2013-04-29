@@ -25,6 +25,12 @@
 #include <feature/Descriptor.h>
 #include <vector>
 
+#include <boost/serialization/base_object.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
+
 /**
  * Representation of an interesting point.
  * The class represents an interesting point. It defines the interface for obtaining the position of the interest point
@@ -40,9 +46,9 @@ class InterestPoint {
 	 *
 	 * @param position The position of the interest point as a point in \f$ \mathcal{SO}(2) \f$.
 	 * @param scale The scale at which the interest point was detected.
-	 * @param descriptor The descriptor of the interest point.
+	 * @param descriptor The descriptor of the interest point. The descriptor will be internally cloned.
 	 */
-	InterestPoint(const OrientedPoint2D& position, double scale, const Descriptor* descriptor = 0);
+	InterestPoint(const OrientedPoint2D& position = OrientedPoint2D(0.,0.,0.), double scale = 1., const Descriptor* descriptor = 0);
 	
 	/** Copy Constructor. */
 	InterestPoint(const InterestPoint& point);
@@ -68,6 +74,10 @@ class InterestPoint {
 	/** Gets the descriptor of the interest point. */
 	inline const Descriptor* getDescriptor() const
 	    {return m_descriptor;}
+
+	/** Get the descriptor of the interest point (non const version). */
+	inline Descriptor* getDescriptor() 
+	    {return m_descriptor;}
 	
 	/** Gets the points in the support region of the interest point. See the paper for more details. */
 	inline const std::vector<Point2D>& getSupport() const
@@ -85,20 +95,36 @@ class InterestPoint {
 	inline void setScaleLevel(unsigned int _scale)
 	    {m_scaleLevel = _scale;}
 	
-	/** Sets the descriptor of the interest point. */
+	/** Sets the descriptor of the interest point. The descriptor will be internally cloned. */
 	inline void setDescriptor(const Descriptor* _descriptor)
-	    {m_descriptor = _descriptor;}
+	    {if(m_descriptor) delete m_descriptor; if(_descriptor) m_descriptor = _descriptor->clone(); else m_descriptor = NULL;} 
 	
 	/** Sets the points in the support region of the interest point. See the paper for more details. */
 	inline void setSupport(const std::vector<Point2D>& points)
 	    {m_supportPoints = points;}
 	    
     protected:
+		friend class boost::serialization::access;
+
+		/** Serializes the class using boost::serialization. */ 
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version);
+
 	OrientedPoint2D m_position; /**< The position of the interest point as a point in \f$ \mathcal{SO}(2) \f$. */
 	std::vector<Point2D> m_supportPoints; /**< The points in the support region of the interest point. See the paper for more details. */
 	double m_scale; /**< The scale at which the interest point was detected. */
 	unsigned int m_scaleLevel; /**< The index of the scale at which the interest point is detected. It is used for plotting purposes. */
-	const Descriptor* m_descriptor; /**< The descriptor of the interest point. */
+	Descriptor* m_descriptor; /**< The descriptor of the interest point. */
 };
+
+template<class Archive>
+void InterestPoint::serialize(Archive& ar, const unsigned int version)
+{
+    ar & BOOST_SERIALIZATION_NVP(m_position);
+    ar & BOOST_SERIALIZATION_NVP(m_supportPoints);
+    ar & BOOST_SERIALIZATION_NVP(m_scale);
+    ar & BOOST_SERIALIZATION_NVP(m_scaleLevel);
+    ar & BOOST_SERIALIZATION_NVP(m_descriptor);
+}
 
 #endif

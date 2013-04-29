@@ -26,10 +26,63 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+
 Descriptor* BetaGrid::clone() const{
     return new BetaGrid(*this);
 }
 	
+void BetaGrid::getFlatDescription(std::vector<double>& description) const {
+    description.clear();
+    double sum = 0.;
+    for(unsigned int i = 0; i < m_histogram.size(); i++){
+	for(unsigned int j = 0; j < m_histogram[i].size(); j++){
+	    double mean = (getHit()[i][j]+1)/(getHit()[i][j] + getMiss()[i][j]+2);
+	    double variance = (getHit()[i][j]+1) * (getMiss()[i][j]+1)/
+			      ( (getHit()[i][j] + getMiss()[i][j]+2) * (getHit()[i][j] + getMiss()[i][j]+2) *
+			      (getHit()[i][j] + getMiss()[i][j] + 3));
+			mean = getHistogram()[i][j];
+	    description.push_back(mean);
+// 	    description.push_back(m_hit[i][j]);
+	    sum += description.back();
+	}
+    }
+    if(sum < 10e-6){
+	for(std::vector<double>::iterator it = description.begin(); it != description.end(); it++){
+	    *it = 10e-10;
+	}
+    } else {
+      	for(std::vector<double>::iterator it = description.begin(); it != description.end(); it++){
+	    *it /= sum;
+	}
+    }
+}
+
+void BetaGrid::getWeightedFlatDescription(std::vector<double>& description, std::vector<double>& weight) const {
+    description.clear();
+    double sum = 0.;
+    for(unsigned int i = 0; i < m_histogram.size(); i++){
+	for(unsigned int j = 0; j < m_histogram[i].size(); j++){
+	    double mean = (getHit()[i][j]+1)/(getHit()[i][j] + getMiss()[i][j]+2);
+	    double variance = (getHit()[i][j]+1) * (getMiss()[i][j]+1)/
+			      ( (getHit()[i][j] + getMiss()[i][j]+2) * (getHit()[i][j] + getMiss()[i][j]+2) *
+			      (getHit()[i][j] + getMiss()[i][j] + 3));
+	    description.push_back(mean);
+	    weight.push_back(1./variance);
+// 	    description.push_back(m_hit[i][j]);
+	    sum += description.back();
+	}
+    }
+/*    if(sum < 10e-6){
+	for(std::vector<double>::iterator it = description.begin(); it != description.end(); it++){
+	    *it = 10e-10;
+	}
+    } else {
+      	for(std::vector<double>::iterator it = description.begin(); it != description.end(); it++){
+	    *it /= sum;
+	}
+    }*/
+}
+
 double BetaGrid::distance(const Descriptor* descriptor) const {
     const BetaGrid *betaGrid = dynamic_cast<const BetaGrid *>(descriptor);
     if(!m_distanceFunction || !betaGrid){

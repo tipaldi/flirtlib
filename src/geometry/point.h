@@ -8,7 +8,7 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * FLIRTLib is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -24,6 +24,10 @@
 #include <cmath>
 #include <iostream>
 
+#include <boost/serialization/base_object.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
 /**
  * Representation of a point in \f$ \mathbb{R}^2 \f$ .
  * The class represents 2D points in terms of their position (#x, #y) in in \f$ \mathbb{R}^2 \f$ .
@@ -43,7 +47,19 @@ struct Point2D {
 
     double x; /**< The x coordinate.  */
     double y; /**< The y coordinate. */
+
+	/** Serializes the class using boost::serialization. */ 
+    template<class Archive>  
+    void serialize(Archive & ar, const unsigned int version);
+    
+    virtual ~Point2D() { }
 };
+template<class Archive>
+void Point2D::serialize(Archive& ar, const unsigned int version)
+{
+    ar & BOOST_SERIALIZATION_NVP(x);
+    ar & BOOST_SERIALIZATION_NVP(y);
+}
 
 /**
  * Representation of a point in \f$ \mathcal{SO}(2) \f$ .
@@ -75,7 +91,18 @@ struct OrientedPoint2D: public Point2D {
     Point2D oplus(const Point2D& point) const;
     
     double theta; /**< The orientation of the point. */
+    
+	/** Serializes the class using boost::serialization. */ 
+	template<class Archive>  
+    void serialize(Archive & ar, const unsigned int version);
 };
+
+template<class Archive>
+void OrientedPoint2D::serialize(Archive& ar, const unsigned int version)
+{
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Point2D);
+    ar & BOOST_SERIALIZATION_NVP(theta);
+}
 
 /** Simple function for convrting degrees into radians */
 inline double deg2rad(double _angle) 
