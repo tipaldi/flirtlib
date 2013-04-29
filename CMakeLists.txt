@@ -10,7 +10,7 @@ SET(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${PROJECT_SOURCE_DIR}/src/build_tool
 
 add_subdirectory(src)
 
-option(BUILD_DOC ON)
+option(BUILD_DOC "Build the documentation " ON)
 
 #-- Add the doc target to generate the API documentation
 if(BUILD_DOC)
@@ -30,4 +30,4 @@ endif()
 install(FILES ${PROJECT_SOURCE_DIR}/COPYING ${PROJECT_SOURCE_DIR}/COPYING.LESSER ${PROJECT_SOURCE_DIR}/README DESTINATION share/flirtlib)
 
 # Install the datasets
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/data DESTINATION share/flirtlib)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/data DESTINATION share/flirtlib PATTERN ".svn" EXCLUDE)
