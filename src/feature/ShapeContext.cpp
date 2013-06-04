@@ -26,6 +26,15 @@ Descriptor* ShapeContext::clone() const{
     return new ShapeContext(*this);
 }
 	
+void ShapeContext::getFlatDescription(std::vector<double>& description) const {
+	description.clear();
+	for(unsigned int i = 0; i < m_histogram.size(); i++){
+		for(unsigned int j = 0; j < m_histogram[i].size(); j++){
+	    description.push_back(m_histogram[i][j]);
+		}
+	}
+}
+
 double ShapeContext::distance(const Descriptor* descriptor) const {
     const ShapeContext *shapeContext = dynamic_cast<const ShapeContext *>(descriptor);
     if(!m_distanceFunction || !shapeContext){

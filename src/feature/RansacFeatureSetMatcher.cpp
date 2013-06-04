@@ -68,11 +68,13 @@ double RansacFeatureSetMatcher::matchSets(const std::vector<InterestPoint *> &re
     
     // Check if there are enough absolute matches 
     if(possibleCorrespondences.size() < 2){  
+// 	std::cout << "Not enough possible correspondences" << std::endl;
 	return 1e17;
     }
     
-    // Check if there are enough matches compared to the inlier probability (FIXME maybe is better to adjust the inlier probability)
+    // Check if there are enough matches compared to the inlier probability 
     if(double(possibleCorrespondences.size()) * m_inlierProbability < 2){  
+// 	std::cout << "Not enough possible correspondences for the inlier probability" << std::endl;
 	return 1e17;
     }
     
@@ -82,6 +84,7 @@ double RansacFeatureSetMatcher::matchSets(const std::vector<InterestPoint *> &re
     // Main loop
     double minimumScore = 1e17;
     for(unsigned int i = 0; i < iterations; i++){
+// 	std::cout << "\tIteration " << i << std::endl;
 	unsigned int first = generator(rng);
 	unsigned int second = generator(rng);
 	while(second == first) second = generator(rng); // avoid useless samples
@@ -93,6 +96,7 @@ double RansacFeatureSetMatcher::matchSets(const std::vector<InterestPoint *> &re
 	double distanceFirst = diffFirst * diffFirst;
 	double distanceSecond = diffSecond * diffSecond;
 	if((distanceFirst - distanceSecond)*(distanceFirst - distanceSecond)/(8*(distanceFirst + distanceSecond	)) > m_rigidityThreshold){
+// 	    std::cout << "\t\tRigidity failure" << std::endl;
 	    continue;
 	}
 	
@@ -119,6 +123,5 @@ double RansacFeatureSetMatcher::matchSets(const std::vector<InterestPoint *> &re
 	pointCorrespondences[i] = std::make_pair(correspondences[i].first->getPosition(), correspondences[i].second->getPosition());
     }
     compute2DPose(pointCorrespondences, transformation);
-
     return verifyHypothesis(reference, data, transformation, correspondences);
 }

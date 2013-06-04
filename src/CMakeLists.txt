@@ -1,25 +1,18 @@
-# This is the main CMake configuration file, you should always do "cmake ." from here and not from subdirs
-
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
-
-# Some project related variables
-PROJECT(FLIRT CXX C)
-
-SET(CMAKE_VERBOSE_MAKEFILE 0)
-
-SET(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${FLIRT_SOURCE_DIR}/build_tools")
-
 if(NOT CMAKE_BUILD_TYPE)
     set (CMAKE_BUILD_TYPE RelWithDebInfo)
 endif(NOT CMAKE_BUILD_TYPE)
 
 # For out-of-source build in code structered with an src directory
-STRING(REGEX REPLACE "/src$" "/lib" CMAKE_LIBRARY_OUTPUT_DIRECTORY ${FLIRT_SOURCE_DIR})
-STRING(REGEX REPLACE "/src$" "/lib" CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${FLIRT_SOURCE_DIR})
-STRING(REGEX REPLACE "/src$" "/bin" CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FLIRT_SOURCE_DIR})
+#STRING(REGEX REPLACE "/src$" "/lib" CMAKE_LIBRARY_OUTPUT_DIRECTORY ${FLIRT_SOURCE_DIR})
+#STRING(REGEX REPLACE "/src$" "/lib" CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${FLIRT_SOURCE_DIR})
+#STRING(REGEX REPLACE "/src$" "/bin" CMAKE_RUNTIME_OUTPUT_DIRECTORY ${FLIRT_SOURCE_DIR})
 
 # Set to build shared objects as option
 OPTION(BUILD_SHARED_LIBS "Build package with shared libraries." ON)
+
+# ---------------------------- Defining building options ------------------------------
+option(BUILD_GUI "Build the GUI" ON)
+
 
 # ---------------------------- Checking the OS ------------------------------
 IF("${CMAKE_SYSTEM}" MATCHES "Linux")
@@ -29,8 +22,8 @@ IF("${CMAKE_SYSTEM}" MATCHES "Linux")
 	IF("${myArch}" MATCHES "x86_64")
 		MESSAGE(STATUS "  64-bit architecture detected")
 		SET(LINUX64 1)
-		SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}64")
-		SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_OUTPUT_DIRECTORY}64")
+# 		SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}64")
+# 		SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_OUTPUT_DIRECTORY}64")
 	ENDIF("${myArch}" MATCHES "x86_64")
 ELSEIF(APPLE)
 	SET(LINUX 0)
@@ -45,6 +38,8 @@ ELSEIF(WIN32)
 	ENDIF(CYGWIN)
 ENDIF("${CMAKE_SYSTEM}" MATCHES "Linux")
 
+
+# ---------------------------- Checking the Libraries ------------------------------
 # Library: Boost
 set(Boost_USE_MULTITHREADED ON)
 FIND_PACKAGE(Boost 1.36.0 COMPONENTS program_options)
@@ -61,9 +56,6 @@ IF(Boost_FOUND)
 ELSE(Boost_FOUND)
 	MESSAGE(FATAL_ERROR "	Boost not found, it is REQUIRED to build the FLIRT.\n Boost can be found on http://www.boost.org")
 ENDIF(Boost_FOUND)
-
-# gui
-SET(BUILD_GUI 1)
 
 IF(BUILD_GUI)
     # Library: Qt4
@@ -136,9 +128,9 @@ ELSE(CAIRO_FOUND)
         MESSAGE(STATUS "        Cairo not found, it is OPTIONAL: to draw to PDF files.")
 ENDIF(CAIRO_FOUND)
 
-INCLUDE_DIRECTORIES(${FLIRT_SOURCE_DIR})
+INCLUDE_DIRECTORIES(${FLIRT_SOURCE_DIR}/src)
 
-
+# ---------------------------- Setting compilation flags ------------------------------
 # Optimization
 SET(LOCAL_OPTIMIZATION_FLAGS "-O3 -march=nocona -msse4.1 -funroll-loops -ftree-vectorize -DTBB -mfpmath=both")
 # SET(LOCAL_OPTIMIZATION_FLAGS "-O3 -march=native -msse4.2 -msse4.1 -funroll-loops -ftree-vectorize -DTBB -mfpmath=both")

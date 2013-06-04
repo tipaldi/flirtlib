@@ -53,6 +53,18 @@ class SensorStream {
 	/** Get the current reading without advancing the stream (const reading) */
 	virtual const AbstractReading* current() const = 0;
 	
+	/** Get the next reading and advance the stream (non const reading) */
+	virtual AbstractReading* next() = 0;
+
+	/** Get the current reading without advancing the stream (nonconst reading) */
+	virtual AbstractReading* current() = 0;
+
+	/** Get the n-th reading if the stream is seekable without advancing the the stream (const reading) */
+	virtual const AbstractReading* operator[](unsigned int n) const = 0;
+
+	/** Get the n-th reading if the stream is seekable without advancing the the stream (non const reading) */
+	virtual AbstractReading* operator[](unsigned int n) = 0;
+	
 	/** Seek the stream to a given sensor position. Return false if is not possible */
 	virtual bool seek(const unsigned int _position = 0, SensorStreamOffset _offset = BEGIN) = 0;
 	

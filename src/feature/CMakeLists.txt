@@ -13,5 +13,29 @@ SET(feature_SRCS
     RansacMultiFeatureSetMatcher.cpp
 ) 
 
-ADD_LIBRARY(feature SHARED ${feature_SRCS})
+SET(feature_HDRS
+    Detector.h
+    Descriptor.h
+    InterestPoint.h
+    MultiScaleDetector.h
+    RangeDetector.h
+    NormalDetector.h
+    NormalEdgeDetector.h
+    NormalBlobDetector.h
+    CurvatureDetector.h
+    ShapeContext.h
+    BetaGrid.h
+    AbstractFeatureSetMatcher.h
+    RansacFeatureSetMatcher.h
+    RansacMultiFeatureSetMatcher.h
+) 
 
+ADD_LIBRARY(feature SHARED ${feature_SRCS})
+TARGET_LINK_LIBRARIES(feature boost_serialization-mt)
+
+install(TARGETS feature
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib/flirtlib
+    ARCHIVE DESTINATION lib/flirtlib)
+
+install(FILES ${feature_HDRS} DESTINATION include/flirtlib/feature)
