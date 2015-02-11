@@ -1,6 +1,6 @@
 ** FLIRTLib - Fast Laser Interest Region Transform Library
 ** Gian Diego Tipaldi, Kai O. Arras.
-** Copyright (C) 2009-2010 Gian Diego Tipaldi and Kai O. Arras
+** Copyright (C) 2009-2015 Gian Diego Tipaldi and Kai O. Arras
 
 FLIRTLib implements the Fast Laser Interest Region Transform introduced by
 Tipaldi and Arras. 
