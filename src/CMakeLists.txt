@@ -42,9 +42,9 @@ ENDIF("${CMAKE_SYSTEM}" MATCHES "Linux")
 # ---------------------------- Checking the Libraries ------------------------------
 # Library: Boost
 set(Boost_USE_MULTITHREADED ON)
-FIND_PACKAGE(Boost 1.36.0 COMPONENTS program_options)
+FIND_PACKAGE(Boost 1.36.0 COMPONENTS serialization program_options)
 #FIND_PACKAGE(Boost COMPONENTS program_options math graph)
-IF(Boost_FOUND)
+IF(Boost_FOUND AND Boost_SERIALIZATION_FOUND AND Boost_PROGRAM_OPTIONS_FOUND)
 	MESSAGE(STATUS "Boost found")
 	IF($ENV{VERBOSE})
  		MESSAGE(STATUS "   Boost_INCLUDE_DIR = ${Boost_INCLUDE_DIR}")
@@ -53,9 +53,9 @@ IF(Boost_FOUND)
 	ENDIF($ENV{VERBOSE})
 	INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
 	LINK_DIRECTORIES(${Boost_LINK_DIRECTORIES})
-ELSE(Boost_FOUND)
+ELSE(Boost_FOUND AND Boost_SERIALIZATION_FOUND AND Boost_PROGRAM_OPTIONS_FOUND)
 	MESSAGE(FATAL_ERROR "	Boost not found, it is REQUIRED to build the FLIRT.\n Boost can be found on http://www.boost.org")
-ENDIF(Boost_FOUND)
+ENDIF(Boost_FOUND AND Boost_SERIALIZATION_FOUND AND Boost_PROGRAM_OPTIONS_FOUND)
 
 IF(BUILD_GUI)
     # Library: Qt4

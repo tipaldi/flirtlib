@@ -7,7 +7,7 @@ SET(geometry_HDRS
 ) 
 
 ADD_LIBRARY(geometry SHARED ${geometry_SRCS})
-TARGET_LINK_LIBRARIES(geometry boost_serialization-mt)
+TARGET_LINK_LIBRARIES(geometry ${Boost_SERIALIZATION_LIBRARY})
 
 install(TARGETS geometry
     RUNTIME DESTINATION bin

@@ -31,7 +31,7 @@ SET(feature_HDRS
 ) 
 
 ADD_LIBRARY(feature SHARED ${feature_SRCS})
-TARGET_LINK_LIBRARIES(feature boost_serialization-mt)
+TARGET_LINK_LIBRARIES(feature ${Boost_SERIALIZATION_LIBRARY})
 
 install(TARGETS feature
     RUNTIME DESTINATION bin
