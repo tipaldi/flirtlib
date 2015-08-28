@@ -26,6 +26,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+BOOST_CLASS_EXPORT(BetaGrid);
 Descriptor* BetaGrid::clone() const{
     return new BetaGrid(*this);
 }
