@@ -1,0 +1,11 @@
+# - Config file for @CMAKE_PROJECT_NAME@
+#
+# It defines the following variables:
+#  @CMAKE_PROJECT_NAME@_INCLUDE_DIRS - Include directories for @CMAKE_PROJECT_NAME@
+#  @CMAKE_PROJECT_NAME@_LIBRARIES    - Libraries for @CMAKE_PROJECT_NAME@
+
+set(FLIRT_INCLUDE_DIRS @CMAKE_INSTALL_PREFIX@/include/flirtlib)
+
+foreach(lib feature geometry gui sensors sensorstream utils)
+    list(APPEND FLIRT_LIBRARIES @CMAKE_INSTALL_PREFIX@/lib/flirtlib/lib${lib}.so)
+endforeach()
