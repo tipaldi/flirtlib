@@ -17,11 +17,11 @@ SET(utils_HDRS
     SimplePeakFinder.h
 )
 
-ADD_LIBRARY(utils SHARED ${utils_SRCS})
+ADD_LIBRARY(flirtlib_utils SHARED ${utils_SRCS})
 
-install(TARGETS utils
+install(TARGETS flirtlib_utils
     RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib/flirtlib
-    ARCHIVE DESTINATION lib/flirtlib)
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)
 
 install(FILES ${utils_HDRS} DESTINATION include/flirtlib/utils)

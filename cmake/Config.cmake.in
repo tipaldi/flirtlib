@@ -7,5 +7,5 @@
 set(FLIRT_INCLUDE_DIRS @CMAKE_INSTALL_PREFIX@/include/flirtlib)
 
 foreach(lib feature geometry gui sensors sensorstream utils)
-    list(APPEND FLIRT_LIBRARIES @CMAKE_INSTALL_PREFIX@/lib/flirtlib/lib${lib}.so)
+    list(APPEND FLIRT_LIBRARIES @CMAKE_INSTALL_PREFIX@/lib/libflirtlib_${lib}.so)
 endforeach()
