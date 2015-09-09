@@ -23,6 +23,23 @@
 
 #include <utils/Regression.h>
 
+
+#include <boost/version.hpp>
+
+#if ((BOOST_VERSION / 100) % 1000) == 54
+// Workaround to use dijkstra_shortest_paths which has a bug in Boost 1.54 from Boost 1.55
+// dijkstra_shortest_paths is used prim_minimum_spanning_tree.hpp
+// Here we use the 1.55 version instead (downloaded into the current folder):
+//
+// wget https://raw.githubusercontent.com/boostorg/graph/boost-1.55.0/include/boost/graph/dijkstra_shortest_paths.hpp
+// Including the local dijkstra_shortest_paths here will shadow any subsequent includes of the system 1.54 version
+#warning "Using dijkstra_shortest_paths.hpp from Boost 1.55!"
+#include "dijkstra_shortest_paths.hpp"
+#endif
+
+#include <boost/graph/prim_minimum_spanning_tree.hpp>
+#include <boost/graph/johnson_all_pairs_shortest.hpp>
+
 CurvatureDetector::CurvatureDetector(const PeakFinder* peak, unsigned int scales, double sigma, double step, unsigned int dmst):
     m_peakFinder(peak),
     m_scaleNumber(scales),
