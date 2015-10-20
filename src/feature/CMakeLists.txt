@@ -1,5 +1,5 @@
-SET(feature_SRCS 
-    InterestPoint.cpp 
+SET(feature_SRCS
+    InterestPoint.cpp
     MultiScaleDetector.cpp
     RangeDetector.cpp
     NormalDetector.cpp
@@ -11,7 +11,7 @@ SET(feature_SRCS
     AbstractFeatureSetMatcher.cpp
     RansacFeatureSetMatcher.cpp
     RansacMultiFeatureSetMatcher.cpp
-) 
+)
 
 SET(feature_HDRS
     Detector.h
@@ -28,14 +28,14 @@ SET(feature_HDRS
     AbstractFeatureSetMatcher.h
     RansacFeatureSetMatcher.h
     RansacMultiFeatureSetMatcher.h
-) 
+)
 
-ADD_LIBRARY(feature SHARED ${feature_SRCS})
-TARGET_LINK_LIBRARIES(feature ${Boost_SERIALIZATION_LIBRARY})
+ADD_LIBRARY(flirtlib_feature SHARED ${feature_SRCS})
+TARGET_LINK_LIBRARIES(flirtlib_feature ${Boost_SERIALIZATION_LIBRARY})
 
-install(TARGETS feature
+install(TARGETS flirtlib_feature
     RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib/flirtlib
-    ARCHIVE DESTINATION lib/flirtlib)
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)
 
 install(FILES ${feature_HDRS} DESTINATION include/flirtlib/feature)

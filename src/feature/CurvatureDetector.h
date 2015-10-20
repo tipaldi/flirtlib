@@ -27,8 +27,6 @@
 #include <utils/PeakFinder.h>
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/prim_minimum_spanning_tree.hpp>
-#include <boost/graph/johnson_all_pairs_shortest.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <vector>
 

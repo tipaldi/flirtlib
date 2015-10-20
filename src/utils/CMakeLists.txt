@@ -6,21 +6,22 @@ SET(utils_SRCS
 )
 
 SET(utils_HDRS
-    Regression.h
     Convolution.h
     Convolution.hpp
     HistogramDistances.h
     HistogramDistances.hpp
-    SimplePeakFinder.h
-    SimpleMinMaxPeakFinder.h
+    PeakFinder.h
     PoseEstimation.h
+    Regression.h
+    SimpleMinMaxPeakFinder.h
+    SimplePeakFinder.h
 )
 
-ADD_LIBRARY(utils SHARED ${utils_SRCS})
+ADD_LIBRARY(flirtlib_utils SHARED ${utils_SRCS})
 
-install(TARGETS utils 
+install(TARGETS flirtlib_utils
     RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib/flirtlib
-    ARCHIVE DESTINATION lib/flirtlib)
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)
 
 install(FILES ${utils_HDRS} DESTINATION include/flirtlib/utils)

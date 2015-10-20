@@ -1,19 +1,19 @@
-SET(sensors_SRCS 
-    AbstractReading.cpp 
+SET(sensors_SRCS
+    AbstractReading.cpp
     LaserReading.cpp
-) 
+)
 
-SET(sensors_HDRS 
+SET(sensors_HDRS
     AbstractReading.h
     LaserReading.h
-) 
+)
 
-ADD_LIBRARY(sensors SHARED ${sensors_SRCS})
-TARGET_LINK_LIBRARIES(sensors geometry)
+ADD_LIBRARY(flirtlib_sensors SHARED ${sensors_SRCS})
+TARGET_LINK_LIBRARIES(flirtlib_sensors flirtlib_geometry)
 
-install(TARGETS sensors 
+install(TARGETS flirtlib_sensors
     RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib/flirtlib
-    ARCHIVE DESTINATION lib/flirtlib)
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)
 
 install(FILES ${sensors_HDRS} DESTINATION include/flirtlib/sensors)

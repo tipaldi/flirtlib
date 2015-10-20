@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>flirtlib</name>
+  <version>1.1.0</version>
+  <description>FLIRTlib</description>
+
+  <maintainer email="efernandez@clearpathrobotics.com">Enrique Fernandez</maintainer>
+  <author email="tipaldi@cs.uni-freiburg.de">Gian Diego Tipaldi</author>
+  <author email="arras@informatik.uni-freiburg.de">Kai O. Arras</author>
+
+  <license>LGPL</license>
+
+  <buildtool_depend>cmake</buildtool_depend>
+
+  <depend>boost</depend>
+  <depend>libcairo2-dev</depend>
+  <depend>libqwt6</depend>
+
+  <build_depend>libqt4-dev</build_depend>
+  <build_depend>libqt4-opengl-dev</build_depend>
+  <build_depend>doxygen</build_depend>
+
+  <exec_depend>libqt4</exec_depend>
+  <exec_depend>libqt4-opengl</exec_depend>
+
+  <export>
+    <!-- Specify that this is not really a Catkin package-->
+    <build_type>cmake</build_type>
+  </export>
+</package>
+
