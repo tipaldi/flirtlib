@@ -121,8 +121,6 @@ class BetaGrid: public Descriptor{
 		std::vector< std::vector< double > > m_miss; /** The histogram of free  cells. */
 };
 
-BOOST_CLASS_EXPORT(BetaGrid);
-
 template <class Archive>
 void BetaGrid::serialize(Archive & ar, const unsigned int version)
 {

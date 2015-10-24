@@ -22,6 +22,8 @@
 #include "ShapeContext.h"
 
 
+BOOST_CLASS_EXPORT(ShapeContext);
+
 Descriptor* ShapeContext::clone() const{
     return new ShapeContext(*this);
 }

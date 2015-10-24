@@ -79,8 +79,6 @@ class ShapeContext: public Descriptor{
 		std::vector< std::vector< double > > m_histogram;	/**< The histogram representing the shape context. */
 };
 
-BOOST_CLASS_EXPORT(ShapeContext);
-
 template <class Archive>
 void ShapeContext::serialize(Archive & ar, const unsigned int version)
 {

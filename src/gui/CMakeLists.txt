@@ -1,6 +1,6 @@
-SET(gui_SRCS 
+SET(gui_SRCS
     Color.cpp
-    LaserReadingRenderer.cpp 
+    LaserReadingRenderer.cpp
     InterestPointRenderer.cpp
     PolarGridRenderer.cpp
     SensorStreamWidget.cpp
@@ -22,7 +22,7 @@ SET(gui_SRCS
     CorrespondenceRenderer.cpp
     FeatureSetMatcherPresenter.cpp
     RansacPresenter.cpp
-) 
+)
 
 SET(gui_HDRS
     AbstractRenderer.h
@@ -52,28 +52,28 @@ SET(gui_HDRS
     CorrespondenceRenderer.h
     FeatureSetMatcherPresenter.h
     RansacPresenter.h
-) 
+)
 
 SET(gui_LIBS
-    sensors 
-    sensorstream 
-    feature
-    geometry 
+    flirtlib_sensors
+    flirtlib_sensorstream
+    flirtlib_feature
+    flirtlib_geometry
     ${QT_LIBRARIES}
     ${OPENGL_LIBRARIES}
     ${QWT_LIBRARIES}
-    utils
+    flirtlib_utils
 )
 
 QT4_AUTOMOC(${gui_SRCS})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
-ADD_LIBRARY(gui SHARED ${gui_SRCS})
-TARGET_LINK_LIBRARIES(gui ${gui_LIBS})
+ADD_LIBRARY(flirtlib_gui SHARED ${gui_SRCS})
+TARGET_LINK_LIBRARIES(flirtlib_gui ${gui_LIBS})
 
-install(TARGETS gui 
+install(TARGETS flirtlib_gui
     RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib/flirtlib
-    ARCHIVE DESTINATION lib/flirtlib)
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)
 
 install(FILES ${gui_HDRS} DESTINATION include/flirtlib/gui)
