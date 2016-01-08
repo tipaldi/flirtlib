@@ -31,7 +31,7 @@ SET(feature_HDRS
 )
 
 ADD_LIBRARY(flirtlib_feature SHARED ${feature_SRCS})
-TARGET_LINK_LIBRARIES(flirtlib_feature ${Boost_SERIALIZATION_LIBRARY})
+TARGET_LINK_LIBRARIES(flirtlib_feature flirtlib_utils flirtlib_geometry flirtlib_sensors ${Boost_SERIALIZATION_LIBRARY})
 
 install(TARGETS flirtlib_feature
     RUNTIME DESTINATION bin

@@ -13,6 +13,7 @@ SET(sensorstream_HDRS
 
 SET(sensorstream_LIBS
     flirtlib_sensors
+    flirtlib_geometry
 )
 
 ADD_LIBRARY(flirtlib_sensorstream SHARED ${sensorstream_SRCS})
