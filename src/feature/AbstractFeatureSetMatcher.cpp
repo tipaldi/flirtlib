@@ -72,5 +72,5 @@ double AbstractFeatureSetMatcher::verifyHypothesis(const std::vector<InterestPoi
 	}
 	score += minDistance;
     }
-    return score;
+    return score / double(data.size());
 }
